@@ -1,0 +1,71 @@
+// features/layout/remote-components.ts
+'use client';
+
+import { useRemoteComponent } from "@/hooks/useRemoteComponent";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
+import { Button } from "@/components/ui/button";
+import { Bell, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, Moon, Settings, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+
+export function remoteComponent() {
+  const ModeToggle = useRemoteComponent('ModeToggle', { useTheme, Button, Moon, Sun });
+
+  const DropHelpdesk = useRemoteComponent('DropHelpdesk', {
+    DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+    DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator,
+    HelpCircle, Button
+  });
+
+  const DropSettings = useRemoteComponent('DropSettings', {
+    DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+    DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator,
+    Settings, Button
+  });
+
+  const DropNotification = useRemoteComponent('DropNotification', {
+    DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+    DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator,
+    Bell, Button
+  });
+
+  const DropUser = useRemoteComponent('DropUser', {
+    DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+    DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator,
+    Avatar, AvatarImage, AvatarFallback, Button, ChevronDown
+  });
+
+  const Navbar = useRemoteComponent('Navbar', {
+    DropUser, DropNotification, DropHelpdesk, DropSettings, ModeToggle
+  });
+
+  const Sidebar = useRemoteComponent('Sidebar', {
+    useTheme, useState, useEffect,
+    ChevronLeft, ChevronRight, ModeToggle,
+    DropHelpdesk, DropSettings, Image,
+    usePathname, Link
+  });
+
+  const LayoutSidebarNavbar = useRemoteComponent('LayoutSidebarNavbar', {
+    Sidebar, Navbar
+  });
+
+  return {
+    ModeToggle,
+    DropHelpdesk,
+    DropSettings,
+    DropNotification,
+    DropUser,
+    Navbar,
+    Sidebar,
+    LayoutSidebarNavbar,
+  };
+}
