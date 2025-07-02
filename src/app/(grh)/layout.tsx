@@ -2,10 +2,14 @@
 
 import { remoteComponent } from "@/helpers/remote-components";
 import { MenuItems } from "@/helpers/data/menuItems";
+import { usePathname } from "next/navigation";
+import { MenuItem } from "@/helpers/types/MenuItem";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { LayoutSidebarNavbar } = remoteComponent();
-
+  const { LayoutSidebarNavbar, CustomBreadcrumb } = remoteComponent();
+  const pathname = usePathname();
+  const actualLabel = MenuItems.find((item: MenuItem) => item.Link === pathname)?.label;
+  
   return LayoutSidebarNavbar ? (
     <LayoutSidebarNavbar 
       navbarTitle="Personnels" 
@@ -18,6 +22,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       logoDark="/logo/logoW.png"
       logoDarkWord="/logo/logowW.png"
     >
+      { CustomBreadcrumb ? 
+        <CustomBreadcrumb
+          items={[
+            { label: "Accueil", href: "/" },
+            { label: "GRH", href: "/" },
+            { label: actualLabel },
+          ]}
+        /> : null }
       {children}
     </LayoutSidebarNavbar>
   ) : null;

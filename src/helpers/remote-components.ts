@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 export function remoteComponent() {
   const ModeToggle = useRemoteComponent('ModeToggle', { useTheme, Button, Moon, Sun });
@@ -58,6 +59,21 @@ export function remoteComponent() {
     Sidebar, Navbar
   });
 
+  const CustomBreadcrumb = useRemoteComponent('CustomBreadcrumb', {
+    Breadcrumb,
+    BreadcrumbEllipsis,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    Link
+  });
+  
   return {
     ModeToggle,
     DropHelpdesk,
@@ -67,5 +83,6 @@ export function remoteComponent() {
     Navbar,
     Sidebar,
     LayoutSidebarNavbar,
+    CustomBreadcrumb
   };
 }
