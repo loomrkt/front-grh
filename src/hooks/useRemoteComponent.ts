@@ -34,22 +34,25 @@ useEffect(() => {
         if (!target) return;
 
         // Nouvelle approche de compilation
-        const { code } = Babel.transform(
-          `(${target.jsx})`, // Parenthèses pour traiter l'expression
-          { 
-            presets: ['react'],
-            plugins: [
-              ["transform-arrow-functions"], 
-              ["transform-template-literals"]
-            ]
-          }
-        );
+        const { code } = Babel.transform(`(${target.jsx})`, { 
+          presets: [
+            'react',
+            'typescript' // Ajoutez ce preset
+          ],
+          filename: 'component.tsx', // Important pour le traitement TS
+          plugins: [
+            "transform-arrow-functions", 
+            "transform-template-literals"
+          ]
+        });
 
         const argNames = ['React', ...Object.keys(stableScope)];
         const argValues = [React, ...Object.values(stableScope)];
 
         // Évaluation directe de l'expression
-        const Compiled = new Function(...argNames, `return ${code}`)(...argValues);
+        const Compiled = new Function(...argNames, `return ${code}`)(
+          ...argValues
+        ) as React.FC<P>;
         
         setComponent(() => Compiled);
       } catch (err) {

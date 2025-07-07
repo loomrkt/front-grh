@@ -9,13 +9,16 @@ import {
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, Moon, Settings, Sun } from "lucide-react";
+import { Bell, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, Moon, SearchIcon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 export function remoteComponent() {
   const ModeToggle = useRemoteComponent('ModeToggle', { useTheme, Button, Moon, Sun });
@@ -73,6 +76,35 @@ export function remoteComponent() {
     DropdownMenuTrigger,
     Link
   });
+
+  const SearchInput = useRemoteComponent('SearchInput', {
+    Input,
+    SearchIcon
+  });
+
+  const CustomButton = useRemoteComponent('CustomButton', {
+    Button
+  });
+
+  const AppTable = useRemoteComponent('AppTable', {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    useRouter
+  });
+
+  const PaginationControls = useRemoteComponent('PaginationControls', {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious
+  });
   
   return {
     ModeToggle,
@@ -83,6 +115,10 @@ export function remoteComponent() {
     Navbar,
     Sidebar,
     LayoutSidebarNavbar,
-    CustomBreadcrumb
+    CustomBreadcrumb,
+    SearchInput,
+    CustomButton,
+    AppTable,
+    PaginationControls
   };
 }
