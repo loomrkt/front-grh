@@ -11,7 +11,7 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
 import { Bell, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, Moon, SearchIcon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -105,6 +105,10 @@ export function remoteComponent() {
     PaginationNext,
     PaginationPrevious
   });
+
+  const CustomInput = useRemoteComponent('CustomInput', {
+    Input
+  });
   
   return {
     ModeToggle,
@@ -119,6 +123,7 @@ export function remoteComponent() {
     SearchInput,
     CustomButton,
     AppTable,
-    PaginationControls
+    PaginationControls,
+    CustomInput
   };
 }
