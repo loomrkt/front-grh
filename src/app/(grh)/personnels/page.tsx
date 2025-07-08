@@ -6,11 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getEmployes } from "@/services/employe";
-
-// Skeleton component for loading states
-const Skeleton = ({ className }: { className: string }) => (
-  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
-);
+import Skeleton from "@/components/skeleton";
 
 export default function page() {
   const { SearchInput, CustomButton, PaginationControls } = remoteComponent();
@@ -23,7 +19,7 @@ export default function page() {
   });
 
   return (
-    <section className="h-full flex flex-col">
+    <section className="h-full flex flex-col max-w-7xl m-auto">
       <div className="flex items-center justify-between w-full">
         {SearchInput ? (
           <div className="w-[250px]">
@@ -44,7 +40,7 @@ export default function page() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto mt-4">
+      <div className="flex-1 overflow-y-auto mt-4 not-md:w-[80vw]">
         <PersonnelsTables currentPage={currentPage} />
       </div>
 

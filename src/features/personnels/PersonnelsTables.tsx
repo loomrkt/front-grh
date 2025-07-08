@@ -4,6 +4,7 @@ import { remoteComponent } from "@/helpers/remote-components";
 import { TableColumn } from "@/helpers/types/TableColumn";
 import { getEmployes } from "@/services/employe";
 import { Employe } from "@/models/employe.dto";
+import { useRouter } from "next/navigation";
 
 
 type PersonnelsTablesProps = {
@@ -11,6 +12,7 @@ type PersonnelsTablesProps = {
 };
 
 const PersonnelsTables = ({ currentPage }: PersonnelsTablesProps) => {
+  const Router = useRouter();
   const { AppTable } = remoteComponent();
 
   const { data: employes } = useSuspenseQuery({
@@ -58,6 +60,7 @@ const PersonnelsTables = ({ currentPage }: PersonnelsTablesProps) => {
           className="shadow-md rounded-lg"
           align="leftCenterRight"
           fixedHeader={true}
+          onRowClick={(item: Employe) => Router.push(`/personnels/${item.id}`)}
         />
       ) : (
         <TableSkeleton />
