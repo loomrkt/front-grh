@@ -1,46 +1,41 @@
 "use client";
-
-import { useMemo } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { remoteComponent } from "@/helpers/remote-components";
 import { TableColumn } from "@/helpers/types/TableColumn";
-import allData from "@/helpers/data/personnels.json";
-import { User } from "@/helpers/types/User";
+import { getEmployes } from "@/services/employe";
+import { Employe } from "@/models/employe.dto";
 
-const PAGE_SIZE = 10;
 
-type Props = {
+type PersonnelsTablesProps = {
   currentPage: number;
 };
 
-const PersonnelsTables = ({ currentPage }: Props) => {
+const PersonnelsTables = ({ currentPage }: PersonnelsTablesProps) => {
   const { AppTable } = remoteComponent();
 
-  const totalItems = allData?.data?.data?.length || 0;
+  const { data: employes } = useSuspenseQuery({
+    queryKey: ["employes"],
+    queryFn: getEmployes,
+  });
 
-  const columns: TableColumn<User>[] = [
-    { key: "Nom", header: "Nom" },
-    { key: "Poste", header: "Poste" },
-    { key: "Département", header: "Département" },
-    { key: "Email", header: "Email" },
-    { key: "Téléphone", header: "Téléphone" },
+  const columns: TableColumn<Employe>[] = [
+    { key: "nom", header: "Nom" },
+    { key: "poste", header: "Poste" },
+    { key: "departement", header: "Département" },
+    { key: "email", header: "Email" },
+    { key: "telephone", header: "Téléphone" },
   ];
 
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * PAGE_SIZE;
-    return allData.data.data.slice(startIndex, startIndex + PAGE_SIZE);
-  }, [currentPage]);
+  const paginatedData = employes.data;
 
-  // Skeleton component for table
   const TableSkeleton = () => (
     <div className="mt-4 shadow-md rounded-lg overflow-hidden">
-      {/* Header Skeleton */}
       <div className="grid grid-cols-5 gap-4 p-4 bg-gray-100">
         {columns.map((_, index) => (
           <div key={index} className="h-6 bg-gray-200 animate-pulse rounded" />
         ))}
       </div>
-      {/* Rows Skeleton */}
-      {Array.from({ length: PAGE_SIZE }).map((_, rowIndex) => (
+      {Array.from({ length: 10 }).map((_, rowIndex) => (
         <div key={rowIndex} className="grid grid-cols-5 gap-4 p-4 border-t">
           {columns.map((_, colIndex) => (
             <div key={colIndex} className="h-6 bg-gray-200 animate-pulse rounded" />
@@ -50,7 +45,7 @@ const PersonnelsTables = ({ currentPage }: Props) => {
     </div>
   );
 
-  if (totalItems === 0) {
+  if (!employes || employes.meta.total === 0) {
     return <p className="text-center mt-8">Aucun personnel trouvé.</p>;
   }
 
@@ -62,7 +57,7 @@ const PersonnelsTables = ({ currentPage }: Props) => {
           data={paginatedData}
           className="shadow-md rounded-lg"
           align="leftCenterRight"
-          fixedHeader={true} // Enable fixed header
+          fixedHeader={true}
         />
       ) : (
         <TableSkeleton />

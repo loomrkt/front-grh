@@ -4,9 +4,8 @@ import { remoteComponent } from "@/helpers/remote-components";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import allData from "@/helpers/data/personnels.json";
-
-const PAGE_SIZE = 10;
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getEmployes } from "@/services/employe";
 
 // Skeleton component for loading states
 const Skeleton = ({ className }: { className: string }) => (
@@ -17,9 +16,11 @@ export default function page() {
   const { SearchInput, CustomButton, PaginationControls } = remoteComponent();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-
-  const totalItems = allData?.data?.data?.length || 0;
-  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  
+  const { data: employes } = useSuspenseQuery({
+    queryKey: ["employes"],
+    queryFn: getEmployes,
+  });
 
   return (
     <section className="h-full flex flex-col">
@@ -50,14 +51,14 @@ export default function page() {
       {PaginationControls ? (
         <div className="mt-4 flex items-center justify-between w-full">
           <div className="text-sm text-gray-600">
-            Liste de {(currentPage - 1) * PAGE_SIZE + 1} à{' '}
-            {Math.min(currentPage * PAGE_SIZE, totalItems)} sur {totalItems}
+            Liste de {(employes.meta.page - 1) * employes.meta.limit + 1} à{' '}
+            {Math.min(employes.meta.page * employes.meta.limit, employes.meta.total)} sur {employes.meta.total}
           </div>
 
           <div>
             <PaginationControls
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={employes.meta.total}
               onPageChange={setCurrentPage}
             />
           </div>
