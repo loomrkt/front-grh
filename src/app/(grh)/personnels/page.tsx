@@ -54,7 +54,7 @@ export default function page() {
           <div>
             <PaginationControls
               currentPage={currentPage}
-              totalPages={employes.meta.total}
+              totalPages={employes.meta.totalPage}
               onPageChange={setCurrentPage}
             />
           </div>

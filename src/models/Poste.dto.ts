@@ -14,6 +14,7 @@ export interface PosteApiResponse {
     total: number;
     page: number;
     limit: number;
+    totalPage: number;
   };
   data: Poste[];
 }

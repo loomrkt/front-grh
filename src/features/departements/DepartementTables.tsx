@@ -2,22 +2,22 @@
 import Skeleton from "@/components/skeleton";
 import { remoteComponent } from "@/helpers/remote-components";
 import { TableColumn } from "@/helpers/types/TableColumn";
-import { Poste, PosteApiResponse } from "@/models/Poste.dto";
+import { Departement, DepartementApiResponse } from "@/models/Departement.dto";
 import { Edit2, X } from "lucide-react";
 
 
-type PosteTablesProps = {
-  Postes: PosteApiResponse
+type DepartementTablesProps = {
+  Departements: DepartementApiResponse
 };
 
-const PosteTables = ({ Postes }: PosteTablesProps) => {
+const DepartementTables = ({ Departements }: DepartementTablesProps) => {
   const { AppTable,CustomButton } = remoteComponent();
 
 
-  const columns: TableColumn<Poste>[] = [
-    { key: "posteCode", header: "Poste code" },
-    { key: "posteTitle", header: "Nom du poste" },
-    { key: "departementName", header: "Département" },
+  const columns: TableColumn<Departement>[] = [
+    { key: "DepartmentCode", header: "Departement code" },
+    { key: "DepartmentName", header: "Nom du Departement" },
+    { key: "ParentDepartment", header: "Département" },
     { header: "Actions", render: (item) => 
         <>
           {
@@ -41,7 +41,7 @@ const PosteTables = ({ Postes }: PosteTablesProps) => {
      },
   ];
 
-  const paginatedData = Postes.data;
+  const paginatedData = Departements.data;
 
   const TableSkeleton = () => (
     <div className="mt-4 shadow-md rounded-lg overflow-hidden">
@@ -60,7 +60,7 @@ const PosteTables = ({ Postes }: PosteTablesProps) => {
     </div>
   );
 
-  if (!Postes || Postes.meta.total === 0) {
+  if (!Departements || Departements.meta.total === 0) {
     return <p className="text-center mt-8">Aucun personnel trouvé.</p>;
   }
 
@@ -81,4 +81,4 @@ const PosteTables = ({ Postes }: PosteTablesProps) => {
   );
 };
 
-export default PosteTables;
+export default DepartementTables;

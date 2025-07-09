@@ -9,7 +9,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function Page() {
-    const { SearchInput, CustomButton, PaginationControls } = remoteComponent();
+    const { SearchInput, PaginationControls } = remoteComponent();
     const [currentPage, setCurrentPage] = useState(1);
     const { data: Postes } = useSuspenseQuery({
         queryKey: ["Postes"],
@@ -43,7 +43,7 @@ export default function Page() {
                         <div>
                             <PaginationControls
                             currentPage={currentPage}
-                            totalPages={Postes.meta.total}
+                            totalPages={Postes.meta.totalPage}
                             onPageChange={setCurrentPage}
                             />
                         </div>

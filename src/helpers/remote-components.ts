@@ -1,4 +1,3 @@
-// features/layout/remote-components.ts
 'use client';
 
 import { useRemoteComponent } from "@/hooks/useRemoteComponent";
@@ -19,6 +18,7 @@ import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, Breadcr
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function remoteComponent() {
   const ModeToggle = useRemoteComponent('ModeToggle', { useTheme, Button, Moon, Sun });
@@ -109,6 +109,10 @@ export function remoteComponent() {
   const CustomInput = useRemoteComponent('CustomInput', {
     Input
   });
+
+  const CustomTabs = useRemoteComponent('CustomTabs', {
+    Tabs, TabsContent, TabsList, TabsTrigger
+  });
   
   return {
     ModeToggle,
@@ -124,6 +128,7 @@ export function remoteComponent() {
     CustomButton,
     AppTable,
     PaginationControls,
-    CustomInput
+    CustomInput,
+    CustomTabs
   };
 }

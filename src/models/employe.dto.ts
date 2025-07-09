@@ -16,6 +16,7 @@ export interface EmployeApiResponse {
     total: number;
     page: number;
     limit: number;
+    totalPage: number;
   };
   data: Employe[]; // Après mapping
 }
