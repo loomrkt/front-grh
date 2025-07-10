@@ -1,8 +1,9 @@
 export interface Departement {
-  id: number;
+  id: string;
   DepartmentCode: string;
   DepartmentName: string;
   ParentDepartment: string;
+  DepartmentsFils?: Departement[];
 }
 
 
