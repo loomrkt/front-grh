@@ -2,43 +2,52 @@
 import Skeleton from "@/components/skeleton";
 import { remoteComponent } from "@/helpers/remote-components";
 import { TableColumn } from "@/helpers/types/TableColumn";
-import { Departement, DepartementApiResponse } from "@/models/Departement.dto";
+import { Departement } from "@/models/Departement.dto";
+import { PaginatedResult } from "@/models/PaginatedResult";
 import { Edit2, X } from "lucide-react";
 
-
 type DepartementTablesProps = {
-  Departements: DepartementApiResponse
+  Departements: PaginatedResult<Departement>;
+  onEdit: (id: string) => void;
 };
 
-const DepartementTables = ({ Departements }: DepartementTablesProps) => {
-  const { AppTable,CustomButton } = remoteComponent();
+const DepartementTables = ({ Departements, onEdit }: DepartementTablesProps) => {
+  const { AppTable, CustomButton } = remoteComponent();
 
+const HandleEdit = (id: string) => () => {
+  onEdit(id);
+const scrollableDiv = document.querySelector("main") || document.querySelector("body");
+  if (scrollableDiv) {
+    scrollableDiv.scrollTo({ top: 0, behavior: "smooth" });
+  }
+};
 
   const columns: TableColumn<Departement>[] = [
-    { key: "DepartmentCode", header: "Departement code" },
-    { key: "DepartmentName", header: "Nom du Departement" },
-    { key: "ParentDepartment", header: "Département" },
-    { header: "Actions", render: (item) => 
+    { key: "departmentCode", header: "Departement code" },
+    { key: "departmentName", header: "Nom du Departement" },
+    { key: "parentDepartment", header: "Département" },
+    {
+      header: "Actions",
+      render: (item) => (
         <>
-          {
-            CustomButton ? (
-              <div className="flex items-center justify-end space-x-2">
-                <CustomButton>
-                  <Edit2 className="h-4 w-4" />
-                </CustomButton>
-                <CustomButton className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
-                  <X className="h-4 w-4" />
-                </CustomButton>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Skeleton className="h-4 w-4" />
-                <Skeleton className="h-4 w-4" />
-              </div>
-            )
-          }
+          {CustomButton ? (
+            <div className="flex items-center justify-end space-x-2">
+              <CustomButton onClick={HandleEdit(item.id)}>
+                <Edit2 className="h-4 w-4" />
+              </CustomButton>
+              <CustomButton className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
+                <X className="h-4 w-4" />
+              </CustomButton>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-4 w-4" />
+              <Skeleton className="h-4 w-4" />
+            </div>
+          )}
         </>
-     },
+      ),
+    },
   ];
 
   const paginatedData = Departements.data;
@@ -61,7 +70,7 @@ const DepartementTables = ({ Departements }: DepartementTablesProps) => {
   );
 
   if (!Departements || Departements.meta.total === 0) {
-    return <p className="text-center mt-8">Aucun personnel trouvé.</p>;
+    return <p className="text-center mt-8">Aucun personnel trouvé.</p>
   }
 
   return (

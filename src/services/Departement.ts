@@ -1,72 +1,81 @@
-import { Departement, DepartementApiResponse } from "@/models/Departement.dto";
+import { CreateDepartmentDto } from "@/models/CreateDepartmentDto";
+import { Departement } from "@/models/Departement.dto";
+import { DepartementDto } from "@/models/DepartementDto";
+import { PaginatedResult } from "@/models/PaginatedResult";
+import { Result } from "@/models/Result";
+import { UpdateDepartmentDto } from "@/models/UpdateDepartmentDto";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/departement";
+const BASE_URL = "http://localhost:5000/api/departments";
 
-// Fonction pour récupérer la liste plate des départements
-export async function getDepartements(): Promise<DepartementApiResponse> {
-  const res = await axios.get(BASE_URL);
-  const apiData = res.data;
 
-  const mappedDepartements: Departement[] = apiData.data.map((item: any): Departement => ({
-    id: item.id,
-    DepartmentCode: item.departmentCode,
-    DepartmentName: item.departmentName,
-    ParentDepartment: item.parentDepartment,
-  }));
-
-  return {
-    success: apiData.success,
-    code: apiData.code,
-    message: apiData.message,
-    meta: apiData.meta,
-    data: mappedDepartements,
-  };
+interface GetDepartmentsParams {
+  page?: number;
+  limit?: number;
+  DepartmentName?: string;
 }
 
-// ✅ Nouvelle fonction pour récupérer les départements sous forme hiérarchique
-export async function getDepartementHierarchie(): Promise<DepartementApiResponse> {
-  const res = await axios.get(`${BASE_URL}/hierarchie`);
-  const apiData = res.data;
-
-  const mapHierarchy = (item: any): Departement => ({
-    id: item.id,
-    DepartmentCode: item.departmentCode,
-    DepartmentName: item.departmentName,
-    ParentDepartment: item.parentDepartment,
-    DepartmentsFils: item.departmentsFils?.map(mapHierarchy) || [],
+export async function getDepartements(params?: GetDepartmentsParams): Promise<PaginatedResult<Departement>> {
+  const res = await axios.get(BASE_URL, {
+    params,
   });
+  return res.data;
+}
 
-  const mappedHierarchie: Departement[] = apiData.data.map(mapHierarchy);
+export async function getDepartementsList(
+  limit: number = -1
+): Promise<PaginatedResult<Departement>> {
+  const res = await axios.get(BASE_URL + "/list", {
+    params: { limit },
+  });
+  console.log("getDepartementsList", res.data);
+  return res.data;
+}
 
-  return {
-    success: apiData.success,
-    code: apiData.code,
-    message: apiData.message,
-    meta: apiData.meta,
-    data: mappedHierarchie,
-  };
+
+// ✅ Nouvelle fonction pour récupérer les départements sous forme hiérarchique
+export async function getDepartementHierarchie(
+  id?: string | null,
+  depth?: number | null
+): Promise<Result<Departement>> {
+  const params: Record<string, string | number | null> = { Depth: depth ?? null };
+
+  if (id) {
+    params.id = id;
+  }
+
+  const res = await axios.get(`${BASE_URL}/hierarchy`, { params });
+  return res.data;
 }
 
 // Récupérer un département par ID
-export const getDepartementById = async (id: number): Promise<Departement> => {
+export const getDepartementById = async (id: string): Promise<Result<DepartementDto>> => {
   const res = await axios.get(`${BASE_URL}/${id}`);
   return res.data;
 };
 
 // Supprimer un département par ID
-export const removeDepartementById = async (id: number) => {
+export const removeDepartementById = async (id: string) => {
   await axios.delete(`${BASE_URL}/${id}`);
 };
 
 // Ajouter un nouveau département
-export const addDepartement = async (departement: Departement) => {
-  const res = await axios.post(BASE_URL, departement);
+export const addDepartement = async (departement: CreateDepartmentDto) => {
+  const payload = {
+    ...departement,
+    parentDepartmentId: departement.parentDepartmentId === "" ? null : departement.parentDepartmentId,
+  };
+  const res = await axios.post(BASE_URL, payload);
   return res.data;
 };
 
 // Mettre à jour un département existant
-export const updateDepartement = async (id: number, departement: Departement) => {
-  const res = await axios.put(`${BASE_URL}/${id}`, departement);
+export const updateDepartement = async (id: string, departement: UpdateDepartmentDto) => {
+  const payload = {
+    departmentCode: departement.departmentCode === "" ? null : departement.departmentCode,
+    departmentName: departement.departmentName === "" ? null : departement.departmentName,
+    parentDepartmentId: departement.parentDepartmentId === "" ? null : departement.parentDepartmentId,
+  };
+  const res = await axios.put(`${BASE_URL}/${id}`, payload);
   return res.data;
 };

@@ -8,7 +8,7 @@ import {
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, Moon, SearchIcon, Settings, Sun } from "lucide-react";
+import { Bell, CalendarIcon, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, Moon, SearchIcon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
@@ -19,7 +19,13 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 export function remoteComponent() {
   const ModeToggle = useRemoteComponent('ModeToggle', { useTheme, Button, Moon, Sun });
 
@@ -106,9 +112,29 @@ export function remoteComponent() {
     PaginationPrevious
   });
 
-  const CustomInput = useRemoteComponent('CustomInput', {
-    Input
+  const CustomSelect = useRemoteComponent('CustomSelect',{
+      Select,
+      SelectContent,
+      SelectItem,
+      SelectTrigger,
+      SelectValue,
+      useState,
   });
+
+  const DatePicker = useRemoteComponent('DatePicker', {
+    CalendarIcon,
+    Input,
+    Calendar,
+    Button,
+    Popover,
+    PopoverContent,
+    PopoverTrigger
+  });
+
+  const CustomInput = useRemoteComponent('CustomInput', {
+    Input, CustomSelect,DatePicker
+  });
+
 
   const CustomTabs = useRemoteComponent('CustomTabs', {
     Tabs, TabsContent, TabsList, TabsTrigger
