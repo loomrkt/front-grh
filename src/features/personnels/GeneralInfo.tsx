@@ -1,5 +1,5 @@
 import Skeleton from "@/components/skeleton";
-import { remoteComponent } from "@/helpers/remote-components";
+import { getRemoteComponent } from "@/services/get-remote-component";
 import { Contact, Identity } from "@/models/types";
 
 interface GeneralInfoProps {
@@ -17,32 +17,14 @@ const GeneralInfo = ({
   formData,
   handleIdentityChange,
 }: GeneralInfoProps) => {
-  const { CustomInput } = remoteComponent();
+  const { CustomInput } = getRemoteComponent();
 
   return (
     <div className="space-y-2 mt-2 w-full">
       {CustomInput ? (
         <>
           <CustomInput
-            label="Genre"
-            labelClassName="w-30"
-            value={formData.identity.gender}
-            onChange={(value: string) => handleIdentityChange("gender", value)}
-            disabled={!isEditing}
-            placeholder={isEditing ? "Ex: Homme ou Femme" : ""}
-          />
-          <CustomInput
-            label="Nationalité"
-            labelClassName="w-30"
-            value={formData.identity.nationality}
-            onChange={(value: string) =>
-              handleIdentityChange("nationality", value)
-            }
-            disabled={!isEditing}
-            placeholder={isEditing ? "Ex: Malagasy" : ""}
-          />
-          <CustomInput
-            label="Date de naissance"
+            label="Telephone"
             labelClassName="w-30"
             value={formData.identity.birthDate}
             onChange={(value: string) =>

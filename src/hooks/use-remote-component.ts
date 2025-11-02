@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
-import * as Babel from '@babel/standalone';
-import React from 'react';
+"use client";
 
-export type ComponentMeta = {
-  name: string;
-  jsx: string;
-};
+import { useEffect, useMemo, useState } from "react";
+import * as Babel from "@babel/standalone";
+import React from "react";
+import { useRemoteComponentStore } from "@/Stores/remote-component-store";
 
 /**
  * Charge dynamiquement un composant depuis un fichier JSON.
@@ -15,53 +13,50 @@ export type ComponentMeta = {
  */
 export function useRemoteComponent<P = Record<string, unknown>>(
   name: string,
-  scope: Record<string, unknown> = {},
-  url: string = 'http://localhost:8080/components.json'
+  scope: Record<string, unknown> = {}
 ): React.FC<P> | null {
+  const { data } = useRemoteComponentStore();
   const [Component, setComponent] = useState<React.FC<P> | null>(null);
+
   const stableScope = useMemo(() => scope, [JSON.stringify(scope)]);
 
-useEffect(() => {
-    if (stableScope && Object.values(stableScope).some(dep => dep === null)) {
+  useEffect(() => {
+    if (stableScope && Object.values(stableScope).some((dep) => dep === null)) {
       return; // Ne pas charger tant que des dépendances sont manquantes
     }
     const loadComponent = async () => {
       try {
-        const res = await fetch(url, { cache: 'no-store' });
-        const data: ComponentMeta[] = await res.json();
-
         const target = data.find((c) => c.name === name);
         if (!target) return;
 
         // Nouvelle approche de compilation
-        const { code } = Babel.transform(`(${target.jsx})`, { 
+        const { code } = Babel.transform(`(${target.jsx})`, {
           presets: [
-            'react',
-            'typescript' // Ajoutez ce preset
+            "react",
+            "typescript", // Ajoutez ce preset
           ],
-          filename: 'component.tsx', // Important pour le traitement TS
-          plugins: [
-            "transform-arrow-functions", 
-            "transform-template-literals"
-          ]
+          filename: "component.tsx", // Important pour le traitement TS
+          plugins: ["transform-arrow-functions", "transform-template-literals"],
         });
 
-        const argNames = ['React', ...Object.keys(stableScope)];
+        const argNames = ["React", ...Object.keys(stableScope)];
         const argValues = [React, ...Object.values(stableScope)];
 
         // Évaluation directe de l'expression
         const Compiled = new Function(...argNames, `return ${code}`)(
           ...argValues
         ) as React.FC<P>;
-        
+
         setComponent(() => Compiled);
-      } catch (err) {
-        console.error(`Erreur lors du chargement du composant distant "${name}" :`, err);
+      } catch (err: any) {
+        console.error(
+          `Erreur lors du chargement du composant distant "${name}": ${err}`
+        );
       }
     };
 
     loadComponent();
-}, [name, url, stableScope]);
+  }, [name, stableScope]);
 
   return Component;
 }

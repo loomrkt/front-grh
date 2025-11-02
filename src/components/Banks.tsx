@@ -6,7 +6,7 @@ import { Bank } from "@/models/types";
 import BankInfo from "./BankInfo";
 
 interface BanksProps {
-  bank: Bank | null;
+  bank?: Bank | null;
   index?: number;
 }
 
@@ -31,7 +31,6 @@ const Banks = ({ bank, index }: BanksProps) => {
   };
 
   const handleSave = () => {
-    console.log(bank ? "Informations bancaires mises à jour :" : "Nouvelles informations bancaires :", formData);
     setIsEditing(false);
   };
 
@@ -52,7 +51,7 @@ const Banks = ({ bank, index }: BanksProps) => {
   };
 
   return (
-    <div className="w-fit flex flex-col items-center p-4">
+    <div className="w-full flex flex-col items-center p-4">
       <div className="mt-4 flex justify-between items-center gap-5 self-start">
         <h2 className="text-lg font-semibold">{bank ? `Information bancaire ${index}` : "Nouvelle banque"}</h2>
         {!isEditing ? (

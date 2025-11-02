@@ -1,57 +1,66 @@
 "use client";
-import Skeleton from "@/components/skeleton";
-import { remoteComponent } from "@/helpers/remote-components";
+import { getRemoteComponent } from "@/services/get-remote-component";
 import { TableColumn } from "@/helpers/types/TableColumn";
-import { Poste, PosteApiResponse } from "@/models/Poste.dto";
-import { Edit2, X } from "lucide-react";
-
+import { Poste } from "@/models/Poste";
+import { PaginatedResult } from "@/models/PaginatedResult";
+import { removePosteById } from "@/services/poste";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 type PosteTablesProps = {
-  Postes: PosteApiResponse
+  Postes: PaginatedResult<Poste>;
+  onEdit: (id: string) => void;
 };
 
-const PosteTables = ({ Postes }: PosteTablesProps) => {
-  const { AppTable,CustomButton } = remoteComponent();
+const PosteTables = ({ Postes, onEdit }: PosteTablesProps) => {
+  const { AppTable } = getRemoteComponent();
+  const queryClient = useQueryClient();
+  
+  // Mutation pour la suppression
+  const deleteMutation = useMutation({
+    mutationFn: (posteId: string) => {
+      return removePosteById(posteId);
+    },
+    onSuccess: () => {
+      // Invalider le cache pour refetch les données
+      queryClient.invalidateQueries({ 
+        queryKey: ["Postes"]
+      });
+      toast.success("Poste supprimé avec succès");
+    },
+    onError: (error: any) => {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression du poste");
+    },
+  });
 
+  const HandleEdit = (poste: Poste) => {
+    onEdit(poste.postId);
+  };
+
+  const HandleDelete = (poste: Poste) => {
+    if (window.confirm(`Êtes-vous sûr de vouloir supprimer le poste "${poste.postId}" ?`)) {
+      deleteMutation.mutate(poste.postId);
+    }
+  };
 
   const columns: TableColumn<Poste>[] = [
     { key: "posteCode", header: "Poste code" },
     { key: "posteTitle", header: "Nom du poste" },
-    { key: "departementName", header: "Département" },
-    { header: "Actions", render: (item) => 
-        <>
-          {
-            CustomButton ? (
-              <div className="flex items-center justify-end space-x-2">
-                <CustomButton>
-                  <Edit2 className="h-4 w-4" />
-                </CustomButton>
-                <CustomButton className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
-                  <X className="h-4 w-4" />
-                </CustomButton>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Skeleton className="h-4 w-4" />
-                <Skeleton className="h-4 w-4" />
-              </div>
-            )
-          }
-        </>
-     },
+    { key: "departmentName", header: "Département" },
   ];
 
   const paginatedData = Postes.data;
 
   const TableSkeleton = () => (
     <div className="mt-4 shadow-md rounded-lg overflow-hidden">
-      <div className="grid grid-cols-5 gap-4 p-4 bg-gray-100">
+      <div className="grid grid-cols-4 gap-4 p-4 bg-gray-100">
         {columns.map((_, index) => (
           <div key={index} className="h-6 bg-gray-200 animate-pulse rounded" />
         ))}
       </div>
       {Array.from({ length: 10 }).map((_, rowIndex) => (
-        <div key={rowIndex} className="grid grid-cols-5 gap-4 p-4 border-t">
+        <div key={rowIndex} className="grid grid-cols-4 gap-4 p-4 border-t">
           {columns.map((_, colIndex) => (
             <div key={colIndex} className="h-6 bg-gray-200 animate-pulse rounded" />
           ))}
@@ -61,7 +70,7 @@ const PosteTables = ({ Postes }: PosteTablesProps) => {
   );
 
   if (!Postes || Postes.meta.total === 0) {
-    return <p className="text-center mt-8">Aucun personnel trouvé.</p>;
+    return <p className="text-center mt-8">Aucun poste trouvé.</p>;
   }
 
   return (
@@ -72,7 +81,9 @@ const PosteTables = ({ Postes }: PosteTablesProps) => {
           data={paginatedData}
           className="shadow-md rounded-lg"
           align="leftCenterRight"
-          fixedHeader={true}
+          useActionButtons={true}
+          onClickEdit={HandleEdit}
+          onClickDelete={HandleDelete}
         />
       ) : (
         <TableSkeleton />

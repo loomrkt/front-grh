@@ -3,16 +3,13 @@ export type MaritalStatus = "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
 export type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
 
 export interface Profile {
-  name: string;
-  url: string;
-  contentType: string;
-  extension: string;
+  FormFile: File;
 }
 
 export interface Identity {
   lastName: string;
   firstName: string;
-  profil?: Profile;
+  Avatar?: Profile;
   gender: Gender;
   civility: string;
   birthDate: string;

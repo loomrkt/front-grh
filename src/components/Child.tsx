@@ -6,7 +6,7 @@ import { Child, Identity } from "@/models/types";
 import IdentityInfo from "./IdentityInfo";
 
 interface ChildProps {
-  child: Child | null;
+  child?: Child | null;
     index?: number;
 }
 
@@ -46,7 +46,6 @@ const ChildComponent = ({ child,index }: ChildProps) => {
   };
 
   const handleSave = () => {
-    console.log(child ? "Enfant modifié :" : "Nouvel enfant :", formData);
     setIsEditing(false);
   };
 
@@ -72,7 +71,7 @@ const ChildComponent = ({ child,index }: ChildProps) => {
   };
 
   return (
-    <div className="w-fit flex flex-col items-center p-4">
+    <div className="w-full flex flex-col items-center p-4">
       <div className="mt-4 flex justify-between items-center gap-5 self-start">
         <h2 className="text-lg font-semibold">{child ? `Enfant ${index}` : "Nouvel enfant"}</h2>
         {!isEditing ? (

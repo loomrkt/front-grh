@@ -1,4 +1,4 @@
-import { Departement } from "@/models/Departement.dto";
+import { Departement } from "@/models/Departement";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState } from "react";

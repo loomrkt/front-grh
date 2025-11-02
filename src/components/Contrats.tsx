@@ -19,7 +19,6 @@ const Contrats = ({ contracts }: ContratsProps) => {
   };
 
   const handleSave = () => {
-    console.log("Saving contracts:", formData);
     setIsEditing(false);
   };
 

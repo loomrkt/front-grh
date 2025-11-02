@@ -1,74 +1,53 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Edit2, Save, X } from "lucide-react";
 import { useState } from "react";
-import { Education } from "@/models/types";
+import { Edit2, Save, X, Plus, Delete } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import EducationInfo from "./EducationInfo";
+import { Education as EducationType } from "@/models/types";
 
 interface EducationsProps {
-  education: Education | null;
-  index?: number;
+  educations?: EducationType[] | null;
+  onSave?: (data: EducationType[]) => void;
 }
 
-const Educations = ({ education, index }: EducationsProps) => {
-  const [isEditing, setIsEditing] = useState(!education);
-  const [formData, setFormData] = useState<Education>(
-    education || {
-      graduation: "",
-      filedOfStudy: "",
-      graduationYear: "",
-    }
-  );
+const Educations = ({ educations, onSave }: EducationsProps) => {
 
-  const handleChange = (field: keyof Education, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleChange = (field: keyof EducationType, value: string) => {
   };
 
-  const handleSave = () => {
-    console.log(education ? "Éducation mise à jour :" : "Nouvelle éducation :", formData);
-    setIsEditing(false);
+  const handleSave = (index: number) => {
   };
 
-  const handleCancel = () => {
-    if (education) {
-      setFormData(education);
-    } else {
-      setFormData({
-        graduation: "",
-        filedOfStudy: "",
-        graduationYear: "",
-      });
-    }
-    setIsEditing(false);
+  const handleCancel = (index: number) => {
+
+  };
+
+  const handleAddEducation = () => {
+  };
+
+  const handleDeleteEducation = (index: number) => {
   };
 
   return (
-    <div className="w-fit flex flex-col items-center p-4">
-      <div className="mt-4 flex justify-between items-center gap-5 self-start">
-        <h2 className="text-lg font-semibold">{education ? `Éducation${index}` : "Nouvelle éducation"}</h2>
-        {!isEditing ? (
-          <Button variant="outline" onClick={() => setIsEditing(true)}>
-            <Edit2 className="h-4 w-4" />
-          </Button>
-        ) : (
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleCancel}>
-              <X className="h-4 w-4" />
-            </Button>
-            <Button onClick={handleSave}>
-              <Save className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+    <div className="w-full flex flex-col items-center p-4">
+      <div className="mt-4 flex justify-between items-center gap-5 self-start w-full">
+        <h2 className="text-lg font-semibold">
+          {"Nouvelle éducation"}
+        </h2>
+        <Button variant="outline" onClick={handleAddEducation}>
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
-      <EducationInfo
-        isEditing={isEditing}
-        formData={formData}
-        handleChange={handleChange}
-      />
+          <div className="w-full mt-4 rounded-md">
+            <div className="flex justify-between items-center gap-5">
+              <h3 className="text-md font-semibold">Éducation</h3>
+            </div>
+            <EducationInfo
+              isEditing={true}
+              formData={{filedOfStudy:"",graduation:"", graduationYear:""}}
+              handleChange={(field, value) => handleChange(field, value)}
+            />
+          </div>
     </div>
   );
 };

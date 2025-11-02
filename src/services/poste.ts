@@ -1,44 +1,55 @@
-import { Poste, PosteApiResponse } from "@/models/Poste.dto";
+import { CreatePosteDto } from "@/models/CreatePosteDto";
+import { PaginatedResult } from "@/models/PaginatedResult";
+import { Poste } from "@/models/Poste";
+import { PosteDto } from "@/models/PosteDto";
+import { Result } from "@/models/Result";
+import { UpdatePosteDto } from "@/models/UpdatePosteDto";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/poste";
+const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API}/Poste`;
 
-export async function getPostes(): Promise<PosteApiResponse> {
-  const res = await axios.get(BASE_URL);
-
-  const apiData = res.data;
-
-  const mappedPostes: Poste[] = apiData.data.map((item: any): Poste => ({
-    id: item.id,
-    posteCode: item.posteCode,
-    posteTitle: item.posteTitle,
-    departementName: item.departementName,
-  }));
-
-  return {
-    success: apiData.success,
-    code: apiData.code,
-    message: apiData.message,
-    meta: apiData.meta,
-    data: mappedPostes,
-  };
+interface GetDepartmentsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
-export const getPosteById = async (id: string): Promise<Poste> => {
-  const res = await axios.get<Poste>(`${BASE_URL}/${id}`);
+export async function getPostes(params?:GetDepartmentsParams): Promise<PaginatedResult<Poste>> {
+  const res = await axios.get(BASE_URL,{
+    params,
+  });
+  return res.data;
+}
+
+export async function getPostesList(): Promise<PaginatedResult<Poste>> {
+  const res = await axios.get(BASE_URL);
+  return res.data;
+}
+
+export const getPosteById = async (id: string): Promise<Result<PosteDto>> => {
+  const res = await axios.get(`${BASE_URL}/${id}`);
   return res.data;
 };
 
-export const removePosteById = async (id: number) => {
+export const removePosteById = async (id: string) => {
   await axios.delete(`${BASE_URL}/${id}`);
 };
 
-export const addPoste = async (poste: Poste) => {
-  const res = await axios.post(BASE_URL, poste);
+export const addPoste = async (poste: CreatePosteDto) => {
+  const payload = {
+    ...poste,
+    departmentId: poste.departementId || null
+  };
+  const res = await axios.post(BASE_URL, payload);
   return res.data;
 };
 
-export const updatePoste = async (id: number, poste: Poste) => {
-  const res = await axios.put(`${BASE_URL}/${id}`, poste);
+export const updatePoste = async (id: string, poste: UpdatePosteDto) => {
+  const payload = {
+    posteCode: poste.posteCode || null,
+    posteTitle: poste.posteTitle || null,
+    departmentId: poste.departementId || null
+  };
+  const res = await axios.put(`${BASE_URL}/${id}`, payload);
   return res.data;
 };

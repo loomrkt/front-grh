@@ -1,21 +1,27 @@
 "use client";
-import { remoteComponent } from "@/helpers/remote-components";
+import { getRemoteComponent } from "@/services/get-remote-component";
 import Skeleton from "@/components/skeleton";
-import { Departement } from "@/models/Departement.dto";
+import { Departement } from "@/models/Departement";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { PaginatedResult } from "@/models/PaginatedResult";
+import { getDepartementsList } from "@/services/Departement";
 
 interface DepartmentSelectInputProps {
   value: string;
   onChange: (value: string) => void;
-  departments: Departement[];
 }
 
 export default function DepartmentSelectInput({
   value,
   onChange,
-  departments,
 }: DepartmentSelectInputProps) {
-  const { CustomInput } = remoteComponent();
-  const options = departments.map((dept) => ({
+    const { data: departments } = useSuspenseQuery<PaginatedResult<Departement>>({
+    queryKey: ["AllDepartments"],
+    queryFn: () => getDepartementsList(),
+  });
+  
+  const { CustomInput } = getRemoteComponent();
+  const options = departments.data.map((dept) => ({
       label: `${dept.departmentName} (${dept.departmentCode})`,
       value: dept.id,
     }))
@@ -25,9 +31,8 @@ export default function DepartmentSelectInput({
       type="select"
       label="Département parent"
       labelClassName="w-40"
-      value={value || "root"}
-      onChange={(val: string) => onChange(val === "root" ? "" : val)}
-      placeholder="Select (Root)"
+      value={value}
+      onChange={(val: string) => onChange(val)}
       selectOptions={options}
     />
   ) : (

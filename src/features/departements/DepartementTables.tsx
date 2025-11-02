@@ -1,10 +1,11 @@
 "use client";
-import Skeleton from "@/components/skeleton";
-import { remoteComponent } from "@/helpers/remote-components";
+import { getRemoteComponent } from "@/services/get-remote-component";
 import { TableColumn } from "@/helpers/types/TableColumn";
-import { Departement } from "@/models/Departement.dto";
+import { Departement } from "@/models/Departement";
 import { PaginatedResult } from "@/models/PaginatedResult";
-import { Edit2, X } from "lucide-react";
+import { removeDepartementById } from "@/services/Departement";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 type DepartementTablesProps = {
   Departements: PaginatedResult<Departement>;
@@ -12,42 +13,39 @@ type DepartementTablesProps = {
 };
 
 const DepartementTables = ({ Departements, onEdit }: DepartementTablesProps) => {
-  const { AppTable, CustomButton } = remoteComponent();
+  const { AppTable } = getRemoteComponent();
+  const queryClient = useQueryClient();
 
-const HandleEdit = (id: string) => () => {
-  onEdit(id);
-const scrollableDiv = document.querySelector("main") || document.querySelector("body");
-  if (scrollableDiv) {
-    scrollableDiv.scrollTo({ top: 0, behavior: "smooth" });
-  }
-};
+  // Mutation pour la suppression
+  const deleteMutation = useMutation({
+    mutationFn: (departementId: string) => {
+      return removeDepartementById(departementId);
+    },
+    onSuccess: () => {
+      // Invalider le cache pour refetch les données
+      queryClient.invalidateQueries({ queryKey: ['Departements'] });
+      toast.success("Département supprimé avec succès");
+    },
+    onError: (error: any) => {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression du département");
+    },
+  });
+
+  const HandleEdit = (departement: Departement) => {
+    onEdit(departement.id);
+  };
+
+  const HandleDelete = (departement: Departement) => {
+    if (window.confirm(`Êtes-vous sûr de vouloir supprimer le département "${departement.departmentName}" ?`)) {
+      deleteMutation.mutate(departement.id);
+    }
+  };
 
   const columns: TableColumn<Departement>[] = [
     { key: "departmentCode", header: "Departement code" },
     { key: "departmentName", header: "Nom du Departement" },
     { key: "parentDepartment", header: "Département" },
-    {
-      header: "Actions",
-      render: (item) => (
-        <>
-          {CustomButton ? (
-            <div className="flex items-center justify-end space-x-2">
-              <CustomButton onClick={HandleEdit(item.id)}>
-                <Edit2 className="h-4 w-4" />
-              </CustomButton>
-              <CustomButton className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">
-                <X className="h-4 w-4" />
-              </CustomButton>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <Skeleton className="h-4 w-4" />
-              <Skeleton className="h-4 w-4" />
-            </div>
-          )}
-        </>
-      ),
-    },
   ];
 
   const paginatedData = Departements.data;
@@ -81,7 +79,9 @@ const scrollableDiv = document.querySelector("main") || document.querySelector("
           data={paginatedData}
           className="shadow-md rounded-lg"
           align="leftCenterRight"
-          fixedHeader={true}
+          useActionButtons={true}
+          onClickEdit={HandleEdit}
+          onClickDelete={HandleDelete}
         />
       ) : (
         <TableSkeleton />

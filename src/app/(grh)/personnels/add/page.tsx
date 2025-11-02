@@ -1,81 +1,22 @@
 "use client"
-import Adresse from "@/components/Adresse";
-import Banks from "@/components/Banks";
-import ChildComponent from "@/components/Child";
-import Educations from "@/components/Educations";
-import Occupation from "@/components/Occupation";
 import UserCard from "@/features/personnels/UserCard";
-import { ApiResponse } from "@/models/types";
-import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Page() {
-    const [userData, setUserData] = useState<ApiResponse | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-    const fetchData = async () => {
-        try {
-        const response = await fetch("http://localhost:3000/employe/1");
-        const data: ApiResponse = await response.json();
-        if (data.success && data.data.length > 0) {
-            setUserData(data);
-        } else {
-            setError("Aucune donnée utilisateur disponible");
-        }
-        } catch (err) {
-        setError("Erreur lors du chargement des données");
-        } finally {
-        setLoading(false);
-        }
-    };
-
-    fetchData();
-    }, []);
-
-    if (loading) return <div>Chargement...</div>;
-    if (error) return <div>Erreur: {error}</div>;
-    if (!userData || userData.data.length === 0) return <div>Aucune donnée disponible</div>;
-
-    const user = userData.data[0];
 
     return (
-        <div className="flex flex-wrap gap-4 p-4 md:h-[80vh]">
-            <div className="not-lg:w-full lg:w-fit flex justify-center items-center h-full">
-                <UserCard identity={user.identity} contact={user.contact} />
+        <div className="flex flex-wrap gap-4 p-4 md:h-[80vh] relative">
+            <div className={`lg:w-fit not-lg:w-full flex justify-center items-center h-full md:border-r md:border-gray-200 md:pr-10`}>
+                <UserCard />
             </div>
-            <div className="w-full lg:flex-1 overflow-scroll h-full grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Adresse address={user.adress} />
-                <Occupation occupation={null}/>
-                {/* mety ho bdb */}
-                 {
-                    user.banques && user.banques.length > 0 ? (
-                        user.banques.map((bank, index) => (
-                            <Banks key={index} bank={bank}  index={index + 1}/>
-                        ))
-                    ) : (
-                        <Banks bank={null} />
-                    )
-                 }
-                 {
-                    user.educations && user.educations.length > 0 ? (
-                        user.educations.map((education, index) => (
-                            <Educations key={index} education={education}  index={index + 1}/>
-                        ))
-                    ) : (
-                        <Educations education={null} />
-                    )
-                 }
-                 {
-                    user.children && user.children.length > 0 ? (
-                        user.children.map((child, index) => (
-                            <ChildComponent key={index} child={child}  index={index + 1}/>
-                        ))
-                    ) : (
-                        <ChildComponent child={null} />
-                    )
-                 }
-                {/* mety ho bdb */}
+            <div className="ml-9 w-full flex-1 h-full overflow-scroll not-md:hidden">
+               <Image
+               src="/employe.png"
+                alt="Employe"
+                width={500}
+                height={500}
+                className="w-full h-full object-contain"
+                />
             </div>
         </div>
     );

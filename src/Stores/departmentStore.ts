@@ -83,7 +83,7 @@ const useDepartmentStore = create<DepartmentFormState>((set, get) => ({
       await queryClient.invalidateQueries({ queryKey: ['Departements'] });
       get().resetForm();
     } catch (error) {
-      console.error('Failed to submit form:', error);
+      toast.error('Failed to save department data');
       throw error;
     }
   },

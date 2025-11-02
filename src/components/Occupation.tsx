@@ -6,7 +6,7 @@ import OccupationInfo from "./OccupationInfo";
 import { Occupation as OccupationType } from "@/models/types";
 
 interface OccupationProps {
-  occupation: OccupationType | null;
+  occupation?: OccupationType | null;
 }
 
 const Occupation = ({ occupation }: OccupationProps) => {
@@ -45,7 +45,7 @@ const Occupation = ({ occupation }: OccupationProps) => {
   };
 
   return (
-    <div className="w-fit flex flex-col items-center p-4">
+    <div className="w-full flex flex-col items-center p-4">
       <div className="mt-4 flex justify-between items-center gap-5 self-start">
         <h2 className="text-lg font-semibold">
           {occupation ? "Poste occupé" : "Nouveau poste"}

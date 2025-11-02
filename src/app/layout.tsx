@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import QueryProvider from "@/providers/QueryProvider";
 import { ToastContainer } from "react-toastify";
+import RemoteComponentProvider from "@/providers/remote-component-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href={`http://localhost:8080/ui.css?v=${Date.now()}`} />
+        <link rel="stylesheet" href={`https://loomrkt.github.io/component/ui.css?v=${Date.now()}`} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -39,10 +40,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <QueryProvider>
-              {children}
-              <ToastContainer />
-            </QueryProvider>
+            <RemoteComponentProvider>
+              <QueryProvider>
+                {children}
+                <ToastContainer />
+              </QueryProvider>
+            </RemoteComponentProvider>
           </ThemeProvider>
       </body>
     </html>

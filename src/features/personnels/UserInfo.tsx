@@ -1,79 +1,75 @@
-import { remoteComponent } from "@/helpers/remote-components";
-import { Contact, Identity } from "@/models/types";
+import Skeleton from "@/components/skeleton";
+import { getRemoteComponent } from "@/services/get-remote-component";
+import { Civility, Gender } from "@/models/employe.dto";
 
 interface UserInfoProps {
-  isEditing: boolean;
   formData: {
-    identity: Identity;
-    contact: Contact;
+    FirstName: string;
+    LastName: string;
+    Civility: Civility| null;
+    Gender: Gender | null;
   };
-  handleIdentityChange: (field: keyof Identity, value: string) => void;
-  handleContactChange: (field: keyof Contact, index: number, value: string) => void;
+  onChange: (field: keyof UserInfoProps["formData"], value: string) => void;
 }
 
-const UserInfo = ({
-  isEditing,
-  formData,
-  handleIdentityChange,
-  handleContactChange,
-}: UserInfoProps) => {
-  const { CustomInput } = remoteComponent();
+const UserInfo = ({ formData, onChange }: UserInfoProps) => {
+  const { CustomInput } = getRemoteComponent();
+
+  const civilityOptions: { value: Civility; label: string }[] = [
+    { value: "Mme", label: "Mme" },
+    { value: "Mr", label: "Mr" },
+    { value: "Mlle", label: "Mlle" },
+  ];
+
+  const genderOptions: { value: Gender; label: string }[] = [
+    { value: "FEMALE", label: "Femme" },
+    { value: "MALE", label: "Homme" },
+  ];
+
+  if (!CustomInput) return (
+    <div className="flex flex-col gap-2">
+      <Skeleton className="h-10 w-52" />
+      <Skeleton className="h-10 w-52" />
+      <Skeleton className="h-10 w-52" />
+    </div>
+  );
 
   return (
-    <div className="text-center mt-2 space-y-2">
-      {isEditing && CustomInput ? (
-        <div className="flex flex-col gap-2">
-          <CustomInput
-            label="Prénom"
-            labelClassName="w-30"
-            value={formData.identity.firstName}
-            onChange={(value: string) => handleIdentityChange("firstName", value)}
-            placeholder="Ex: John"
-          />
-          <CustomInput
-            label="Nom"
-            labelClassName="w-30"
-            value={formData.identity.lastName}
-            onChange={(value: string) => handleIdentityChange("lastName", value)}
-            placeholder="Ex: Doe"
-          />
-          <CustomInput
-            label="Civilité"
-            labelClassName="w-30"
-            value={formData.identity.civility}
-            onChange={(value: string) => handleIdentityChange("civility", value)}
-            placeholder="Ex: Monsieur/Madame"
-          />
-          <CustomInput
-            label="Téléphone"
-            labelClassName="w-30"
-            value={formData.contact.phoneNumber[0]}
-            onChange={(value: string) =>
-              handleContactChange("phoneNumber", 0, value)
-            }
-            placeholder="Ex: +261 xx xx xxx xx"
-          />
-          <CustomInput
-            label="Email"
-            labelClassName="w-30"
-            value={formData.contact.email[0]}
-            onChange={(value: string) => handleContactChange("email", 0, value)}
-            placeholder="Ex: xxxxxx@gmail.com"
-          />
-        </div>
-      ) : (
-        <>
-          <h2 className="text-lg font-semibold w-[200px]">
-            {formData.identity.civility} {formData.identity.firstName} {formData.identity.lastName}
-          </h2>
-          <p className="text-gray-500">
-            {formData.contact.phoneNumber[0] || "+261 xx xx xxx xx"}
-          </p>
-          <p className="text-gray-500">
-            {formData.contact.email[0] || "xxxxxx@gmail.com"}
-          </p>
-        </>
-      )}
+    <div className="text-center mt-2 space-y-2 w-full">
+      <div className="flex flex-col gap-2">
+        <CustomInput
+          label="Nom"
+          labelClassName="w-30"
+          value={formData.LastName}
+          onChange={(value: string) => onChange("LastName", value)}
+          placeholder="Ex: Doe"
+        />
+        <CustomInput
+          label="Prénom"
+          labelClassName="w-30"
+          value={formData.FirstName}
+          onChange={(value: string) => onChange("FirstName", value)}
+          placeholder="Ex: John"
+        />
+        <CustomInput
+          type="select"
+          label="Civilité"
+          placeholder="..."
+          labelClassName="w-40"
+          value={formData.Civility}
+          onChange={(value: Civility) => onChange("Civility", value)} // <-- typage précis ici
+          selectOptions={civilityOptions}
+        />
+        <CustomInput
+          type="select"
+          label="Genre"
+          placeholder="..."
+          labelClassName="w-40"
+          value={formData.Gender}
+          onChange={(value: Gender) => onChange("Gender", value)} // <-- typage précis ici
+          selectOptions={genderOptions}
+        />
+      </div>
     </div>
   );
 };

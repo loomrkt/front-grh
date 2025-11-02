@@ -1,143 +1,163 @@
-"use client";
+// UserCard.tsx
 import { Button } from "@/components/ui/button";
-import { Edit2, Save, X } from "lucide-react";
+import { Save } from "lucide-react";
 import { useState } from "react";
 import ProfileImage from "./ProfileImage";
 import UserInfo from "./UserInfo";
-import GeneralInfo from "./GeneralInfo";
-import { Identity, Contact } from "@/models/types";
+import { CreateEmployeDto } from "@/models/CreateEmployeDto";
+import ContactInfo from "./ContactInfo";
+import PosteSelectInput from "@/components/PosteSelectInput";
+import { useMutation } from "@tanstack/react-query";
+import { addEmploye } from "@/services/employe";
+import { toast } from "react-toastify";
+import { set } from "date-fns";
+import { getRemoteComponent } from "@/services/get-remote-component";
+import Skeleton from "@/components/skeleton";
+import { useRouter } from "next/navigation";
 
-enum Gender {
-  Male = "MALE",
-  Female = "FEMALE",
-  Other = "OTHER",
-}
-
-interface UserCardProps {
-  identity: Identity | null;
-  contact: Contact | null;
-}
-
-const UserCard = ({ identity, contact }: UserCardProps) => {
-  const [isEditing, setIsEditing] = useState(!identity || !contact); // Start in editing mode if either is null (creation)
-  const [formData, setFormData] = useState<{
-    identity: Identity;
-    contact: Contact;
-    profileImage?: File | null;
-  }>({
-    identity: identity || {
-      firstName: "",
-      lastName: "",
-      profil: undefined, // Use undefined to match Identity interface
-      gender: Gender.Other, // Default to a valid Gender enum value
-      civility: "",
-      birthDate: "",
-      birthPlace: "",
-      nationality: "",
+const UserCard = () => {
+  const Router = useRouter();
+  const { CustomButton } = getRemoteComponent();
+  const [formData, setFormData] = useState<CreateEmployeDto>({
+    FirstName: "",
+    LastName: "",
+    Civility: null,
+    Contact: {
+      PhoneNumber: [""],
+      Email: [""],
     },
-    contact: {
-      phoneNumber: contact?.phoneNumber.length ? contact.phoneNumber : [""],
-      email: contact?.email.length ? contact.email : [""],
+    PostId: "",
+    DepartmentId: "",
+    Gender: null,
+    Avatar: {
+      FormFile: null,
     },
-    profileImage: null,
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    identity?.profil?.url || null
-  );
+  const [errors, setErrors] = useState<
+    { propertyName: string; errorMessage: string }[]
+  >([]); // Add state for errors
 
-  const handleIdentityChange = (field: keyof Identity, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      identity: { ...prev.identity, [field]: value },
-    }));
-  };
+  // useMutation hook for adding employee
+  const mutation = useMutation({
+    mutationFn: addEmploye,
+    onSuccess: (data) => {
+      toast.success("Employee added successfully!");
+      setFormData({
+        FirstName: "",
+        LastName: "",
+        Civility: null,
+        Contact: {
+          PhoneNumber: [""],
+          Email: [""],
+        },
+        PostId: "",
+        DepartmentId: "",
+        Gender: null,
+        Avatar: {
+          FormFile: null,
+        },
+      });
+      setErrors([]);
+      Router.push(`/personnels/${data.data.id}`);
+    },
+    onError: (error: any) => {
+      console.error("Error adding employee:", error);
+      if (error.response?.data?.data && Array.isArray(error.response.data.data)) {
+        setErrors(error.response.data.data);
+      }
+      toast.error(`${error.response?.data?.message || "Unknown error"}`);
+    },
+  });
 
-  const handleContactChange = (
-    field: keyof Contact,
-    index: number,
+  const handleIdentityChange = (
+    field: keyof Pick<CreateEmployeDto, "FirstName" | "LastName" | "Civility" | "Gender">,
     value: string
   ) => {
     setFormData((prev) => ({
       ...prev,
-      contact: {
-        ...prev.contact,
-        [field]: prev.contact[field].map((item, i) =>
-          i === index ? value : item
-        ),
+      [field]: value,
+    }));
+  };
+
+  const handleAvatarChange = (file: File | null) => {
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        Avatar: {
+          FormFile: file,
+        },
+      }));
+    }
+  };
+
+  const handleContactChange = (
+    field: keyof CreateEmployeDto["Contact"],
+    value: string[]
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      Contact: {
+        ...prev.Contact,
+        [field]: value,
       },
     }));
   };
 
-  const handleSave = () => {
-    console.log(identity && contact ? "Données sauvegardées :" : "Données créées :", {
-      ...formData,
-      profileImage: formData.profileImage
-        ? formData.profileImage.name
-        : "No file selected",
-    });
-    setIsEditing(false);
+  const handlePosteChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      PostId: value || "",
+    }));
   };
 
-  const handleCancel = () => {
-    setFormData({
-      identity: identity || {
-        firstName: "",
-        lastName: "",
-        profil: undefined, // Use undefined to match Identity interface
-        gender: Gender.Other, // Default to a valid Gender enum value
-        civility: "",
-        birthDate: "",
-        birthPlace: "",
-        nationality: "",
-      },
-      contact: {
-        phoneNumber: contact?.phoneNumber.length ? contact.phoneNumber : [""],
-        email: contact?.email.length ? contact.email : [""],
-      },
-      profileImage: null,
-    });
-    setImagePreview(identity?.profil?.url || null);
-    setIsEditing(false);
+  const handleSave = () => {
+    setErrors([]); // Clear previous errors before new submission
+    mutation.mutate(formData);
   };
 
   return (
-    <div className="w-fit flex flex-col items-center p-4 overflow-scroll h-full">
-      <ProfileImage
-        isEditing={isEditing}
-        imagePreview={imagePreview}
-        setImagePreview={setImagePreview}
-        setFormData={setFormData}
-      />
-      <UserInfo
-        isEditing={isEditing}
-        formData={formData}
-        handleIdentityChange={handleIdentityChange}
-        handleContactChange={handleContactChange}
-      />
-      <div className="mt-4 flex justify-between items-center gap-5">
-        <h2 className="text-lg font-semibold">
-          {identity && contact ? "Information générale" : "Nouvelle information"}
-        </h2>
-        {!isEditing ? (
-          <Button variant="outline" onClick={() => setIsEditing(true)}>
-            <Edit2 className="h-4 w-4" />
-          </Button>
-        ) : (
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleCancel}>
-              <X className="h-4 w-4" />
-            </Button>
-            <Button onClick={handleSave}>
-              <Save className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+    <div className="w-full flex flex-col items-center overflow-scroll space-y-6">
+      <div className="flex items-center gap-5">
+        <ProfileImage
+          initialImage={undefined}
+          onFileChange={handleAvatarChange}
+        />
+        <UserInfo
+          formData={{
+            FirstName: formData.FirstName,
+            LastName: formData.LastName,
+            Civility: formData.Civility,
+            Gender: formData.Gender
+          }}
+          onChange={handleIdentityChange}
+        />
       </div>
-      <GeneralInfo
-        isEditing={isEditing}
-        formData={formData}
-        handleIdentityChange={handleIdentityChange}
+
+      <ContactInfo
+        formData={formData.Contact}
+        onChange={handleContactChange}
+        errors={errors}
       />
+
+      <PosteSelectInput
+        value={formData.PostId}
+        onChange={handlePosteChange}
+      />
+
+      {
+        CustomButton ? (
+          <CustomButton
+          className="self-end"
+            onClick={handleSave}
+            disabled={mutation.isPending}
+          >
+            <Save size={18} />
+            {mutation.isPending ? "Saving..." : "Save"}
+          </CustomButton>
+        ) : (
+          <Skeleton className="h-10 w-full" />
+        )
+      }
     </div>
   );
 };

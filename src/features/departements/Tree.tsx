@@ -1,4 +1,4 @@
-import { Departement } from "@/models/Departement.dto";
+import { Departement } from "@/models/Departement";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { Result } from "@/models/Result";
 import { getDepartementHierarchie, getDepartements } from "@/services/Departement";

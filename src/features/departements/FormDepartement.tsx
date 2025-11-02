@@ -1,23 +1,20 @@
 "use client";
 import Skeleton from "@/components/skeleton";
-import { remoteComponent } from "@/helpers/remote-components";
+import { getRemoteComponent } from "@/services/get-remote-component";
 import Image from "next/image";
 import { useEffect } from "react";
 import useDepartmentStore from "@/Stores/departmentStore";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { getDepartementsList } from "@/services/Departement";
-import { PaginatedResult } from "@/models/PaginatedResult";
-import { Departement } from "@/models/Departement.dto";
 import DepartmentSelectInput from "@/components/DepartmentSelectInput";
 
 interface FormDepartementProps {
-  departmentId?: string;
+  departmentId?: string | null;
   onCancel?: () => void;
 }
 
 const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
-  const { CustomInput, CustomButton } = remoteComponent();
+  const { CustomInput, CustomButton } = getRemoteComponent();
 
   const {
     mode,
@@ -30,10 +27,6 @@ const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
     setField,
     cancelUpdate,
   } = useDepartmentStore();
-  const { data: allDepartments } = useSuspenseQuery<PaginatedResult<Departement>>({
-      queryKey: ["AllDepartments", { limit: -1 }],
-      queryFn: () => getDepartementsList(-1),
-    });
 
   // Gestion mode create/update et chargement des données
   useEffect(() => {
@@ -63,7 +56,7 @@ const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
     try {
       await submitForm(queryClient);
       toast.success(mode === "create" ? "Département créé avec succès" : "Département mis à jour avec succès");
-      if (mode === "update" && onCancel) {
+      if (onCancel) {
         onCancel();
       }
     } catch (error: any) {
@@ -82,10 +75,10 @@ const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full p-6 bg-[#F4F4FC] rounded-2xl max-w-7xl mx-auto flex not-md:flex-col gap-4 md:flex-row items-center justify-between"
+      className="w-full p-10 bg-[#F4F4FC] rounded-2xl max-w-7xl mx-auto flex not-md:flex-col gap-4 md:flex-row items-center justify-between"
     >
       {/* Côté gauche : illustration */}
-      <div className="not-md:w-full md:w-[45%] flex flex-col justify-center items-center">
+      <div className="hidden md:w-[45%] md:flex flex-col justify-center items-center">
         <div>
           <p className="uppercase font-light self-start">Ajouter un Département</p>
           <Image
@@ -123,7 +116,6 @@ const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
             <DepartmentSelectInput
               value={parentDepartmentId || "root"}
               onChange={(val) => handleChange("parentDepartmentId", val)}
-              departments={allDepartments.data}
             />
           </>
         ) : (

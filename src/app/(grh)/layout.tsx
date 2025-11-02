@@ -1,12 +1,12 @@
 'use client';
 
-import { remoteComponent } from "@/helpers/remote-components";
 import { MenuItems } from "@/helpers/data/menuItems";
 import { usePathname } from "next/navigation";
+import { getRemoteComponent } from "@/services/get-remote-component";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { LayoutSidebarNavbar } = remoteComponent();
+  const { LayoutSidebarNavbar } = getRemoteComponent();
 
   const getNavbarTitle = () => {
     if (pathname.startsWith("/personnels")) return "Personnels";

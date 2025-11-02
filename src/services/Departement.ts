@@ -1,18 +1,18 @@
 import { CreateDepartmentDto } from "@/models/CreateDepartmentDto";
-import { Departement } from "@/models/Departement.dto";
+import { Departement } from "@/models/Departement";
 import { DepartementDto } from "@/models/DepartementDto";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { Result } from "@/models/Result";
 import { UpdateDepartmentDto } from "@/models/UpdateDepartmentDto";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api/departments";
+const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API}/Department`;
 
 
 interface GetDepartmentsParams {
   page?: number;
   limit?: number;
-  DepartmentName?: string;
+  search?: string;
 }
 
 export async function getDepartements(params?: GetDepartmentsParams): Promise<PaginatedResult<Departement>> {
@@ -22,13 +22,8 @@ export async function getDepartements(params?: GetDepartmentsParams): Promise<Pa
   return res.data;
 }
 
-export async function getDepartementsList(
-  limit: number = -1
-): Promise<PaginatedResult<Departement>> {
-  const res = await axios.get(BASE_URL + "/list", {
-    params: { limit },
-  });
-  console.log("getDepartementsList", res.data);
+export async function getDepartementsList(): Promise<PaginatedResult<Departement>> {
+  const res = await axios.get(BASE_URL);
   return res.data;
 }
 
@@ -72,8 +67,8 @@ export const addDepartement = async (departement: CreateDepartmentDto) => {
 // Mettre à jour un département existant
 export const updateDepartement = async (id: string, departement: UpdateDepartmentDto) => {
   const payload = {
-    departmentCode: departement.departmentCode === "" ? null : departement.departmentCode,
-    departmentName: departement.departmentName === "" ? null : departement.departmentName,
+    departmentCode: departement.departmentCode || null,
+    departmentName: departement.departmentName || null,
     parentDepartmentId: departement.parentDepartmentId === "" ? null : departement.parentDepartmentId,
   };
   const res = await axios.put(`${BASE_URL}/${id}`, payload);
