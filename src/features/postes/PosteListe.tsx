@@ -1,6 +1,6 @@
 import Skeleton from "@/components/skeleton";
 import PosteTables from "@/features/postes/PosteTables";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Poste } from "@/models/Poste";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { getPostes } from "@/services/poste";
@@ -8,12 +8,22 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import FormPoste from "./FormPoste";
+import { getDepartements } from "@/services/Departement";
+import { Departement } from "@/models/Departement";
 
 const PosteListe = () => {
-  const { SearchInput, PaginationControls, CustomButton } = getRemoteComponent();
+  const { SearchInput, PaginationControls, CustomButton } = GetRemoteComponent();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [departementId, setDepartementId] = useState<string | null>(null);
 
   const [selectedPosteId, setSelectedPosteId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -24,7 +34,7 @@ const PosteListe = () => {
   }
 
   const handleAddPoste = () => {
-    setSelectedPosteId(null); // null pour un nouvel ajout
+    setSelectedPosteId(null);
     setIsDialogOpen(true);
   };
 
@@ -34,33 +44,64 @@ const PosteListe = () => {
   }
 
   const { data: Postes } = useSuspenseQuery<PaginatedResult<Poste>>({
-    queryKey: ['Postes', currentPage, searchTerm],
-    queryFn: () => getPostes({ page: currentPage,limit:10, search: searchTerm }),
+    queryKey: ['Postes', currentPage, searchTerm, departementId],
+    queryFn: () => getPostes({ 
+      page: currentPage,
+      limit: 10, 
+      search: searchTerm, 
+      departmentId: departementId || undefined 
+    }),
+  });
+
+  const { data: Departements } = useSuspenseQuery<PaginatedResult<Departement>>({
+    queryKey: ['Departements'],
+    queryFn: () => getDepartements({ page: 1 }),
   });
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between w-full mb-4">
-        {SearchInput ? (
-          <div className="w-[250px]">
-            <SearchInput
-              value={searchTerm}
-              onChange={setSearchTerm} 
-            />
-          </div>
-        ) : (
-          <Skeleton className="h-10 w-[250px]" />
-        )}
-        {
-          CustomButton ? (
-            <CustomButton onClick={handleAddPoste}>
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter un poste
-            </CustomButton>
+      <div className="flex items-center justify-between w-full mb-4 gap-3">
+        <div className="flex items-center gap-3 flex-1">
+          {SearchInput ? (
+            <div className="w-[250px]">
+              <SearchInput
+                value={searchTerm}
+                onChange={setSearchTerm} 
+              />
+            </div>
           ) : (
-            <Skeleton className="h-10 w-32" />
-          )
-        }
+            <Skeleton className="h-10 w-[250px]" />
+          )}
+          
+          <Select
+            value={departementId || "all"}
+            onValueChange={(value) => {
+              setDepartementId(value === "all" ? null : value);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Tous les départements" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les départements</SelectItem>
+              {Departements?.data?.map((dept) => (
+                <SelectItem key={dept.id} value={dept.id}>
+                  {dept.departmentName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {CustomButton ? (
+          <CustomButton onClick={handleAddPoste}>
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter un poste
+          </CustomButton>
+        ) : (
+          <Skeleton className="h-10 w-32" />
+        )}
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -75,6 +116,7 @@ const PosteListe = () => {
       <div className="overflow-y-auto mt-4 not-md:w-[80vw]">
         <PosteTables Postes={Postes} onEdit={handleEditPoste} />
       </div>
+      
       {PaginationControls ? (
         <div className="mt-4 flex items-center justify-between w-full">
           <div className="text-sm text-gray-600">

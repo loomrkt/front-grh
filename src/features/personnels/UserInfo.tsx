@@ -1,5 +1,5 @@
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Civility, Gender } from "@/models/employe.dto";
 
 interface UserInfoProps {
@@ -13,7 +13,7 @@ interface UserInfoProps {
 }
 
 const UserInfo = ({ formData, onChange }: UserInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
 
   const civilityOptions: { value: Civility; label: string }[] = [
     { value: "Mme", label: "Mme" },

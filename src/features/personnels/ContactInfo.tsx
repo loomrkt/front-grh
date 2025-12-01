@@ -1,6 +1,6 @@
 // ContactInfo.tsx
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 
 interface ContactInfoProps {
   formData: {
@@ -12,7 +12,7 @@ interface ContactInfoProps {
 }
 
 const ContactInfo = ({ formData, onChange, errors }: ContactInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   if (!CustomInput) return <div className="flex flex-col gap-2 items-start">
     <Skeleton className="h-10 w-full" />
     <Skeleton className="h-10 w-full" />
@@ -40,7 +40,7 @@ const ContactInfo = ({ formData, onChange, errors }: ContactInfoProps) => {
           {phoneErrors && phoneErrors.length > 0 && (
             <div className="text-red-500 text-sm mt-1 self-start w-fit">
               {phoneErrors.map((err, index) => (
-                <span>
+                <span key={index}>
                   {index > 0 && " | "}
                   <span key={index}>{err.errorMessage}</span>
                 </span>

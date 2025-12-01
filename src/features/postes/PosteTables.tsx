@@ -1,11 +1,22 @@
 "use client";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { TableColumn } from "@/helpers/types/TableColumn";
 import { Poste } from "@/models/Poste";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { removePosteById } from "@/services/poste";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type PosteTablesProps = {
   Postes: PaginatedResult<Poste>;
@@ -13,8 +24,9 @@ type PosteTablesProps = {
 };
 
 const PosteTables = ({ Postes, onEdit }: PosteTablesProps) => {
-  const { AppTable } = getRemoteComponent();
+  const { AppTable } = GetRemoteComponent();
   const queryClient = useQueryClient();
+  const [posteToDelete, setPosteToDelete] = useState<Poste | null>(null);
   
   // Mutation pour la suppression
   const deleteMutation = useMutation({
@@ -27,10 +39,12 @@ const PosteTables = ({ Postes, onEdit }: PosteTablesProps) => {
         queryKey: ["Postes"]
       });
       toast.success("Poste supprimé avec succès");
+      setPosteToDelete(null);
     },
     onError: (error: any) => {
       console.error("Erreur lors de la suppression:", error);
       toast.error("Erreur lors de la suppression du poste");
+      setPosteToDelete(null);
     },
   });
 
@@ -39,8 +53,12 @@ const PosteTables = ({ Postes, onEdit }: PosteTablesProps) => {
   };
 
   const HandleDelete = (poste: Poste) => {
-    if (window.confirm(`Êtes-vous sûr de vouloir supprimer le poste "${poste.postId}" ?`)) {
-      deleteMutation.mutate(poste.postId);
+    setPosteToDelete(poste);
+  };
+
+  const confirmDelete = () => {
+    if (posteToDelete) {
+      deleteMutation.mutate(posteToDelete.postId);
     }
   };
 
@@ -74,21 +92,41 @@ const PosteTables = ({ Postes, onEdit }: PosteTablesProps) => {
   }
 
   return (
-    <div className="mt-4 max-w-7xl mx-auto">
-      {AppTable ? (
-        <AppTable
-          columns={columns}
-          data={paginatedData}
-          className="shadow-md rounded-lg"
-          align="leftCenterRight"
-          useActionButtons={true}
-          onClickEdit={HandleEdit}
-          onClickDelete={HandleDelete}
-        />
-      ) : (
-        <TableSkeleton />
-      )}
-    </div>
+    <>
+      <div className="mt-4 max-w-7xl mx-auto">
+        {AppTable ? (
+          <AppTable
+            columns={columns}
+            data={paginatedData}
+            className="shadow-md rounded-lg"
+            align="leftCenterRight"
+            useActionButtons={true}
+            onClickEdit={HandleEdit}
+            onClickDelete={HandleDelete}
+          />
+        ) : (
+          <TableSkeleton />
+        )}
+      </div>
+
+      <AlertDialog open={!!posteToDelete} onOpenChange={() => setPosteToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer le poste "{posteToDelete?.posteTitle}" (Code: {posteToDelete?.posteCode}) ?
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
+
 // UserCard.tsx
-import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { useState } from "react";
 import ProfileImage from "./ProfileImage";
@@ -10,14 +10,13 @@ import PosteSelectInput from "@/components/PosteSelectInput";
 import { useMutation } from "@tanstack/react-query";
 import { addEmploye } from "@/services/employe";
 import { toast } from "react-toastify";
-import { set } from "date-fns";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import Skeleton from "@/components/skeleton";
 import { useRouter } from "next/navigation";
 
 const UserCard = () => {
   const Router = useRouter();
-  const { CustomButton } = getRemoteComponent();
+  const { CustomButton } = GetRemoteComponent();
   const [formData, setFormData] = useState<CreateEmployeDto>({
     FirstName: "",
     LastName: "",

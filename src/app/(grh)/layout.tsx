@@ -2,11 +2,11 @@
 
 import { MenuItems } from "@/helpers/data/menuItems";
 import { usePathname } from "next/navigation";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { LayoutSidebarNavbar } = getRemoteComponent();
+  const { LayoutSidebarNavbar } = GetRemoteComponent();
 
   const getNavbarTitle = () => {
     if (pathname.startsWith("/personnels")) return "Personnels";

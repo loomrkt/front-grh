@@ -1,6 +1,6 @@
 "use client";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Occupation as OccupationType } from "@/models/types";
 
 interface OccupationInfoProps {
@@ -14,7 +14,7 @@ const OccupationInfo = ({
   formData,
   handleChange,
 }: OccupationInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
 
   // Liste des champs obligatoires
   const requiredFields: (keyof OccupationType)[] = ["status", "position"];

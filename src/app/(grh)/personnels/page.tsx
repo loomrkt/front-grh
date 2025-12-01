@@ -1,36 +1,73 @@
 'use client';
 import PersonnelsTables from "@/features/personnels/PersonnelsTables";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getEmployes } from "@/services/employe";
 import Skeleton from "@/components/skeleton";
 import Link from "next/link";
-
-export default function page() {
-  const { SearchInput, CustomButton, PaginationControls } = getRemoteComponent();
+import { PaginatedResult } from "@/models/PaginatedResult";
+import { Poste } from "@/models/Poste";
+import { getPostes } from "@/services/poste";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+export default function Page() {
+  const { SearchInput, CustomButton, PaginationControls } = GetRemoteComponent();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [posteId, setPosteId] = useState<string | null>(null);
 
   const { data: employes } = useSuspenseQuery({
-    queryKey: ["employes", currentPage, searchTerm],
-    queryFn: () => getEmployes({ page: currentPage, limit: 10, search: searchTerm }),
+    queryKey: ["employes", currentPage, searchTerm, posteId],
+    queryFn: () => getEmployes({ page: currentPage, limit: 10, search: searchTerm, posteId: posteId || undefined }),
   });
+
+    const { data: Postes } = useSuspenseQuery<PaginatedResult<Poste>>({
+      queryKey: ['Postes'],
+      queryFn: () => getPostes({ page: 1 }),
+    });
 
   return (
     <section className="h-full flex flex-col max-w-7xl m-auto">
       <div className="flex items-center justify-between w-full">
-        {SearchInput ? (
-          <div className="w-[250px]">
-            <SearchInput
-              value={searchTerm}
-              onChange={setSearchTerm}
-            />
-          </div>
-        ) : (
-          <Skeleton className="h-10 w-[250px]" />
-        )}
+        <div className="flex items-center gap-3 flex-1">
+
+          {SearchInput ? (
+            <div className="w-[250px]">
+              <SearchInput
+                value={searchTerm}
+                onChange={setSearchTerm}
+              />
+            </div>
+          ) : (
+            <Skeleton className="h-10 w-[250px]" />
+          )}
+          <Select
+            value={posteId || "all"}
+            onValueChange={(value) => {
+              setPosteId(value === "all" ? null : value);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Tous les postes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les postes</SelectItem>
+              {Postes?.data?.map((poste) => (
+                <SelectItem key={poste.postId} value={poste.postId}>
+                  {poste.posteTitle}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {CustomButton ? (
           <div>
             <Link href="/personnels/add">

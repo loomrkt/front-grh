@@ -24,7 +24,7 @@ import {
   Sun,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -72,7 +72,7 @@ import {
 import { useRemoteComponent } from "@/hooks/use-remote-component";
 import { Edit2, X } from "lucide-react";
 
-export function getRemoteComponent() {
+export function GetRemoteComponent() {
   const ModeToggle = useRemoteComponent("ModeToggle", {
     useTheme,
     Button,

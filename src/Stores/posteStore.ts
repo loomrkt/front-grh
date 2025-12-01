@@ -62,6 +62,7 @@ const usePosteStore = create<PosteFormState>((set, get) => ({
       });
     } catch (error) {
       toast.error('Failed to load poste data');
+      throw error;
     }
   },
 

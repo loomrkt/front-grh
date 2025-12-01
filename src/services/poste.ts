@@ -1,3 +1,4 @@
+import { Departement } from '@/models/Departement';
 import { CreatePosteDto } from "@/models/CreatePosteDto";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { Poste } from "@/models/Poste";
@@ -12,6 +13,7 @@ interface GetDepartmentsParams {
   page?: number;
   limit?: number;
   search?: string;
+  departmentId?: string;
 }
 
 export async function getPostes(params?:GetDepartmentsParams): Promise<PaginatedResult<Poste>> {

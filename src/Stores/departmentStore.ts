@@ -62,6 +62,7 @@ const useDepartmentStore = create<DepartmentFormState>((set, get) => ({
       });
     } catch (error) {
       toast.error('Failed to load department data');
+      throw error;
     }
   },
 

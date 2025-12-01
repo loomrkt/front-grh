@@ -1,8 +1,6 @@
 "use client";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { TableColumn } from "@/helpers/types/TableColumn";
-import { getEmployes } from "@/services/employe";
 import { Employe } from "@/models/employe.dto";
 import { useRouter } from "next/navigation";
 import { PaginatedResult } from "@/models/PaginatedResult";
@@ -12,7 +10,7 @@ type PersonnelsTablesProps = {
 };
 
 type FlattenedEmploye = {
-  id: number;
+  id: string;
   nom: string;
   email: string;
   telephone: string;
@@ -20,10 +18,10 @@ type FlattenedEmploye = {
 
 const PersonnelsTables = ({ employes }: PersonnelsTablesProps) => {
   const Router = useRouter();
-  const { AppTable } = getRemoteComponent();
+  const { AppTable } = GetRemoteComponent();
 
   const flattenedData: FlattenedEmploye[] = employes.data.map((employe) => ({
-    id: Number(employe.id),
+    id: employe.id,
     nom: `${employe.identity.firstName} ${employe.identity.lastName}`,
     email: employe.contact.email?.[0],
     telephone: employe.contact.phoneNumber?.[0],

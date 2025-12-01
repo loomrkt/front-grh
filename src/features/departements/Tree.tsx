@@ -1,3 +1,4 @@
+
 import { Departement } from "@/models/Departement";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { Result } from "@/models/Result";
@@ -151,7 +152,7 @@ useEffect(() => {
       y: dimensions.height / 2 - (root.y + NODE_HEIGHT / 2) * scale,
     });
   }
-}, [dimensions, calculateLayout, scale, departmentId]);
+}, [dimensions, calculateLayout, scale, departmentId,tree]);
 
 // Centrer seulement lors du changement initial des données
 useEffect(() => {
@@ -185,7 +186,7 @@ useEffect(() => {
     }
     isInitialRender.current = false;
   }
-}, [dimensions, calculateLayout, scale, departmentId]); // Sans 'tree'
+}, [dimensions, calculateLayout, scale, departmentId,tree]); // Sans 'tree'
 
   // Toggle node expansion
   const toggleNode = useCallback((id: string) => {

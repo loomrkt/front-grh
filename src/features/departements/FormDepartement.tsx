@@ -1,10 +1,11 @@
+
 "use client";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import Image from "next/image";
 import { useEffect } from "react";
 import useDepartmentStore from "@/Stores/departmentStore";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import DepartmentSelectInput from "@/components/DepartmentSelectInput";
 
@@ -14,7 +15,7 @@ interface FormDepartementProps {
 }
 
 const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
-  const { CustomInput, CustomButton } = getRemoteComponent();
+  const { CustomInput, CustomButton } = GetRemoteComponent();
 
   const {
     mode,
@@ -80,9 +81,8 @@ const FormDepartement = ({ departmentId, onCancel }: FormDepartementProps) => {
       {/* Côté gauche : illustration */}
       <div className="hidden md:w-[45%] md:flex flex-col justify-center items-center">
         <div>
-          <p className="uppercase font-light self-start">Ajouter un Département</p>
           <Image
-            src="/Departement.png"
+            src="/departement.png"
             alt="Département Icon"
             width={1000}
             height={600}

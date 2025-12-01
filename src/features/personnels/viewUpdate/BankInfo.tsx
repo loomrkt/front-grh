@@ -1,9 +1,10 @@
+
 "use client";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Edit, Check, X, Loader2, Plus, Delete, ChevronUp, ChevronDown } from "lucide-react";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { toast } from "react-toastify";
 import { createBank, updateBank, deleteBank } from "@/services/Bank";
 import { Bank } from "@/models/employe.dto";
@@ -19,7 +20,7 @@ interface ErrorData {
 }
 
 const BankInfo = ({ id, formData }: BankInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   const [banks, setBanks] = useState<Bank[]>(formData || []);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [visibility, setVisibility] = useState<{ [key: number]: boolean }>(

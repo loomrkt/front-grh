@@ -1,18 +1,18 @@
 import Skeleton from "@/components/skeleton";
 import DepartementTables from "@/features/departements/DepartementTables";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Departement } from "@/models/Departement";
 import { PaginatedResult } from "@/models/PaginatedResult";
 import { getDepartements } from "@/services/Departement";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { use, useState } from "react";
+import { useState } from "react";
 import FormDepartement from "./FormDepartement";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
 const DepartementListe = () => {
-  const { CustomButton, SearchInput, PaginationControls } = getRemoteComponent();
+  const { CustomButton, SearchInput, PaginationControls } = GetRemoteComponent();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { data: Departements } = useSuspenseQuery<PaginatedResult<Departement>>({

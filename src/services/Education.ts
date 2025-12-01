@@ -1,7 +1,7 @@
 import { Education } from "@/models/employe.dto";
 import axios from "axios";
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API}/Educations`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API}/Education`;
 
 export const createEducation = async (id: string, education: Education, isChild: boolean = false) => {
   const formData = new FormData();

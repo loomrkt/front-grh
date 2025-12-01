@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Edit, Check, X, Loader2, User, ChevronDown, ChevronUp } from "lucide-react";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Identity } from "@/models/employe.dto";
 import { updateEmployeIdentity } from "@/services/employe";
 import { toast } from "react-toastify";
@@ -16,7 +16,7 @@ interface IdentityInfoProps {
 }
 
 const IdentityInfo = ({ id, formData }: IdentityInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
 
   // State for toggling visibility
   const [isVisible, setIsVisible] = useState(true);

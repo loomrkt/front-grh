@@ -1,5 +1,5 @@
 "use client";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import Skeleton from "@/components/skeleton";
 import { Departement } from "@/models/Departement";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -20,7 +20,7 @@ export default function DepartmentSelectInput({
     queryFn: () => getDepartementsList(),
   });
   
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   const options = departments.data.map((dept) => ({
       label: `${dept.departmentName} (${dept.departmentCode})`,
       value: dept.id,

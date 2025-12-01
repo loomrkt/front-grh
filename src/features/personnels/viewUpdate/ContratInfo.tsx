@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Edit, Check, X, Loader2, Plus, Delete, ChevronUp, ChevronDown } from "lucide-react";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { createContrat, updateContrat, deleteContrat } from "@/services/Contrat";
@@ -20,7 +20,7 @@ interface ErrorData {
 }
 
 const ContratInfo = ({ id, formData }: ContratInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   const [contrats, setContrats] = useState<Contrat[]>(
     formData.map((contrat) => ({
       ...contrat,

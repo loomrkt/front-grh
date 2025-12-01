@@ -1,13 +1,14 @@
+
 "use client";
 import { useState, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit, Check, X, Loader2, Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { createChild, updateChild, deleteChild } from "@/services/Child";
-import { Child, Gender, Civility } from "@/models/employe.dto";
+import { Child, Gender } from "@/models/employe.dto";
 import ProfileImage from "../ProfileImage";
 import EducationInfo from "./EducationInfo";
 
@@ -47,7 +48,7 @@ const ChildInfo = ({ id, formData }: ChildInfoProps) => {
     file: child.file || { formFile: null },
   });
 
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   const queryClient = useQueryClient();
   const [children, setChildren] = useState<Child[]>(formData ? formData.map(normalizeChild) : []);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);

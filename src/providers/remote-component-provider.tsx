@@ -1,3 +1,4 @@
+
 "use client";
 import ErrorComponent from "@/components/error";
 import Loading from "@/components/loading";
@@ -15,7 +16,7 @@ const RemoteComponentProvider: React.FC<RemoteComponentProviderProps> = ({
   const { setData, setError, clearError, error, setIsLoading, isLoading } =
     useRemoteComponentStore();
   const remoteComponentUrlServer =
-    process.env.NEXT_PUBLIC_REMOTE_COMPONENT_SERVER || "";
+    process.env.NEXT_PUBLIC_REMOTE_COMPONENT_SERVER+`/components.json` || "";
 
   useEffect(() => {
     const loadComponent = async () => {

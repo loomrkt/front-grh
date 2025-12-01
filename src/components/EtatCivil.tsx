@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Button } from "./ui/button";
 import { Edit2, Save, X } from "lucide-react";
 import { CivilStatus, MaritalStatus } from "@/models/types";
@@ -10,7 +10,7 @@ interface EtatCivilProps {
 }
 
 const EtatCivil = ({ civilStatus }: EtatCivilProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(civilStatus);
 

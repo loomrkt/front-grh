@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Edit, Check, X, Loader2, Users2, ChevronUp, ChevronDown } from "lucide-react";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { CivilStatus, Gender, Civility, CivilStatusType } from "@/models/employe.dto";
 import { updateCivilStatus } from "@/services/employe";
 import { toast } from "react-toastify";
@@ -16,7 +16,7 @@ interface CivilStatusInfoProps {
 }
 
 const CivilStatusInfo = ({ id, formData }: CivilStatusInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   
   // State for toggling visibility
   const [isVisible, setIsVisible] = useState(true);

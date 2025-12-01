@@ -74,7 +74,7 @@ export const deleteChild = async (childId: string): Promise<void> => {
 export const createEducation = async (childId: string, education: Education): Promise<{ id: string }> => {
   const formData = createEducationFormData(education);
   const response = await axios.post<{ id: string }>(
-    `${API_BASE_URL}/Educations/Child/${childId}`,
+    `${API_BASE_URL}/Education/Child/${childId}`,
     formData,
     {
       headers: {
@@ -90,7 +90,7 @@ export const createEducation = async (childId: string, education: Education): Pr
 export const updateEducation = async (childId: string, educationId: string, education: Education): Promise<void> => {
   const formData = createEducationFormData(education);
   await axios.put(
-    `${API_BASE_URL}/Educations/Child/${childId}/${educationId}`,
+    `${API_BASE_URL}/Education/Child/${childId}/${educationId}`,
     formData,
     {
       headers: {
@@ -103,7 +103,7 @@ export const updateEducation = async (childId: string, educationId: string, educ
 
 // Delete an education for a child
 export const deleteEducation = async (childId: string, educationId: string): Promise<void> => {
-  await axios.delete(`${API_BASE_URL}/Educations/Child/${childId}/${educationId}`, {
+  await axios.delete(`${API_BASE_URL}/Education/Child/${childId}/${educationId}`, {
     headers: {
       accept: "text/plain",
     },

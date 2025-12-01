@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href={`https://loomrkt.github.io/component/ui.css?v=${Date.now()}`} />
+        <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_REMOTE_COMPONENT_SERVER}/ui.css?v=${Date.now()}`} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

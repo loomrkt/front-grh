@@ -1,6 +1,7 @@
+
 "use client";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import Image from "next/image";
 import { useEffect } from "react";
 import usePosteStore from "@/Stores/posteStore";
@@ -14,7 +15,7 @@ interface FormPosteProps {
 }
 
 const FormPoste = ({ posteId, onCancel }: FormPosteProps) => {
-  const { CustomInput, CustomButton } = getRemoteComponent();
+  const { CustomInput, CustomButton } = GetRemoteComponent();
 
   const {
     mode,
@@ -80,7 +81,6 @@ const FormPoste = ({ posteId, onCancel }: FormPosteProps) => {
       {/* Côté gauche : illustration */}
       <div className="not-md:w-full md:w-[45%] flex flex-col justify-center items-center">
         <div>
-          <p className="uppercase font-light self-start not-md:hidden md:block">Ajouter un Poste</p>
           <Image
             src="/poste.png"
             alt="Poste Icon"

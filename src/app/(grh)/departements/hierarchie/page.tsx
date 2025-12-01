@@ -1,5 +1,4 @@
 "use client"
-import Tree from "@/features/departements/Tree";
 import TreeKonva from "@/features/departements/TreeKonva";
 
 export default function Page() {

@@ -1,3 +1,4 @@
+
 export type Gender = "MALE" | "FEMALE" | "OTHER";
 export type MaritalStatus = "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
 export type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";

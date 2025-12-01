@@ -1,5 +1,5 @@
 "use client";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import Skeleton from "@/components/skeleton";
 import { Poste } from "@/models/Poste";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -15,12 +15,12 @@ export default function PosteSelectInput({
   value,
   onChange,
 }: PosteSelectInputProps) {
-  const { data: postes, error } = useSuspenseQuery<PaginatedResult<Poste>>({
+  const { data: postes } = useSuspenseQuery<PaginatedResult<Poste>>({
     queryKey: ["AllPostes"],
     queryFn: () => getPostesList(),
   });
 
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
   const options = postes.data.map((poste) => {
     const option = {
       label: `${poste.posteTitle} (${poste.posteCode})`,

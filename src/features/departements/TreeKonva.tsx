@@ -1,6 +1,7 @@
+
 import { Departement } from "@/models/Departement";
 import { PaginatedResult } from "@/models/PaginatedResult";
-import { getDepartementHierarchie, getDepartements, getDepartementsList } from "@/services/Departement";
+import { getDepartementHierarchie, getDepartementsList } from "@/services/Departement";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import TreeControls from "./TreeControls";
@@ -48,7 +49,7 @@ const Tree: React.FC = () => {
   // Fetch all departments for dropdown
   const { data: allDepartments } = useSuspenseQuery<PaginatedResult<Departement>>({
     queryKey: ["AllDepartments", {limit: -1}],
-    queryFn: () => getDepartementsList(-1),
+    queryFn: () => getDepartementsList(),
   });
 
   // Fetch department hierarchy

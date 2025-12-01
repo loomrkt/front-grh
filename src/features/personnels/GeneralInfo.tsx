@@ -1,5 +1,5 @@
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Contact, Identity } from "@/models/types";
 
 interface GeneralInfoProps {
@@ -17,7 +17,7 @@ const GeneralInfo = ({
   formData,
   handleIdentityChange,
 }: GeneralInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
 
   return (
     <div className="space-y-2 mt-2 w-full">

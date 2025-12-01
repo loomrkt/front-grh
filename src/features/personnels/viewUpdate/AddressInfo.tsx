@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Edit, Check, X, Loader2, MapPin, ChevronUp, ChevronDown } from "lucide-react";
 import Skeleton from "@/components/skeleton";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { Address } from "@/models/employe.dto";
 import { updateEmployeAddress } from "@/services/employe";
 import { toast } from "react-toastify";
@@ -25,7 +25,7 @@ const defaultAddress: Address = {
 };
 
 const AddressInfo = ({ id, formData }: AddressInfoProps) => {
-  const { CustomInput } = getRemoteComponent();
+  const { CustomInput } = GetRemoteComponent();
 
   // State for toggling visibility
   const [isVisible, setIsVisible] = useState(true);

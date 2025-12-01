@@ -1,10 +1,10 @@
+
 "use client";
-import { getRemoteComponent } from "@/services/get-remote-component";
+import { GetRemoteComponent } from "@/services/get-remote-component";
 import { TableColumn } from "@/helpers/types/TableColumn";
 import { PaginatedResult } from "@/models/PaginatedResult";
-import { HistoryEntry, HistoryEntryDetail, getHistoryById } from "@/services/Historique";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { HistoryEntry, getHistoryById } from "@/services/Historique";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { JSX, useState } from "react";
@@ -24,9 +24,8 @@ type HistoryTablesProps = {
   queryKey?: string[];
 };
 
-const HistoryTables = ({ histories, queryKey = ["histories"] }: HistoryTablesProps) => {
-  const { AppTable } = getRemoteComponent();
-  const queryClient = useQueryClient();
+const HistoryTables = ({ histories }: HistoryTablesProps) => {
+  const { AppTable } = GetRemoteComponent();
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
 
   // Query to fetch details of the selected history entry
@@ -36,29 +35,7 @@ const HistoryTables = ({ histories, queryKey = ["histories"] }: HistoryTablesPro
     enabled: !!selectedHistoryId,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      throw new Error("Suppression de l'historique non implémentée.");
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-      toast.success("Historique supprimé avec succès");
-    },
-    onError: (error: any) => {
-      console.error("Erreur :", error);
-      toast.error("Erreur lors de la suppression");
-    },
-  });
 
-  const handleEdit = (history: HistoryEntry) => {
-    console.log("Pas d'édition pour les historiques : ", history.id);
-  };
-
-  const handleDelete = (history: HistoryEntry) => {
-    if (window.confirm(`Supprimer cette entrée d'historique ?`)) {
-      deleteMutation.mutate(history.id);
-    }
-  };
 
   // Function to handle row click
   const handleRowClick = (history: ExtendedHistoryEntry) => {
@@ -232,8 +209,6 @@ const HistoryTables = ({ histories, queryKey = ["histories"] }: HistoryTablesPro
             className="shadow-md rounded-lg cursor-pointer"
             align="leftCenterRight"
             useActionButtons={false}
-            onClickEdit={handleEdit}
-            onClickDelete={handleDelete}
             onRowClick={handleRowClick}
           />
         ) : (

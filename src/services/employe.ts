@@ -1,3 +1,4 @@
+
 import { Result } from '@/models/Result';
 import { CreateEmployeDto } from "@/models/CreateEmployeDto";
 import { Address, CivilStatus, Employe, Identity } from "@/models/employe.dto";
@@ -10,6 +11,7 @@ interface Params {
   page?: number;
   limit?: number;
   search?: string;
+  posteId?: string;
 }
 
 export async function getEmployes(params?:Params): Promise<PaginatedResult<Employe>> {
@@ -26,7 +28,7 @@ export async function getEmployeById(id: string): Promise<Result<Employe>> {
   return res.data;
 };
 
-export const removeEmployeById = async (id: number) => {
+export const removeEmployeById = async (id: string) => {
   await axios.delete(`${BASE_URL}/${id}`);
 };
 
