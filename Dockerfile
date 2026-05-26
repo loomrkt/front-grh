@@ -1,54 +1,48 @@
-FROM node:20-alpine as base
-
-RUN apk add --no-cache libc6-compat
-
-WORKDIR /base 
-
-COPY package.json ./
-
-RUN yarn
-
-FROM node:20-alpine as builder
-
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV NEXTAUTH_SECRET=tLvWSgJpanrxdRmb2mQKcuNzJAzaU6D2n5EEKhkbK4U=
-ENV AUTH_SECRET=tLvWSgJpanrxdRmb2mQKcuNzJAzaU6D2n5EEKhkbK4U=
-ENV NEXT_PUBLIC_BASE_API_URL=https://back.gemlabconsulting.com/api
-ENV NEXT_PUBLIC_BASE_FILE_URL=https://back.gemlabconsulting.com/upload
-ENV NEXTAUTH_URL=https://app.gemlabconsulting.com
-
-
-WORKDIR /build
-
-COPY --from=base /base/node_modules ./node_modules
-COPY src ./src
-COPY public ./public
-COPY package.json ./
-COPY eslint.config.mjs ./eslint.config.mjs
-COPY tsconfig.json ./tsconfig.json
-COPY postcss.config.mjs ./postcss.config.mjs
-COPY components.json ./components.json
-COPY .env ./
-
-RUN echo -e 'import type { NextConfig } from "next";\n\nconst nextConfig = {\n  eslint: {\n    ignoreDuringBuilds: true,\n  },\n  typescript: {\n    ignoreBuildErrors: true,\n  },\n  output: "standalone",\n  webpack: (config) => {\n    config.resolve.fallback = {\n      canvas: false,\n    };\n    return config;\n  },\n};\n\nmodule.exports = nextConfig;' > ./next.config.ts
-
-
-RUN yarn build
-
-FROM node:20-alpine AS runner
-
-EXPOSE 3000
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+COPY package.json yarn.lock* pnpm-lock.yaml* ./
 
-COPY --from=builder /build/public ./public
-COPY --from=builder --chown=nextjs:nodejs /build/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /build/.next/static ./.next/static
+RUN \
+if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm install --frozen-lockfile; \
+else npm ci; \
+fi
 
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+
+RUN \
+if [ -f yarn.lock ]; then yarn build; \
+elif [ -f pnpm-lock.yaml ]; then pnpm build; \
+else npm run build; \
+fi
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+adduser --system --uid 1001 nextjs
+
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
 
 CMD ["node", "server.js"]

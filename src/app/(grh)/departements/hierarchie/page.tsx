@@ -1,9 +1,12 @@
-"use client"
-import TreeKonva from "@/features/departements/TreeKonva";
+"use client";
+
+import dynamic from "next/dynamic";
+
+const TreeKonva = dynamic(() => import("@/features/departements/TreeKonva"), {
+  ssr: false,
+  loading: () => <div>Chargement...</div>,
+});
 
 export default function Page() {
-    return <div className="h-full w-full">
-            {/* <Tree /> */}
-            <TreeKonva/>
-        </div>
+  return <TreeKonva />;
 }
